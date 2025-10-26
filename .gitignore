@@ -18,3 +18,9 @@ android/app/build/
 
 # Generated
 *.log
+
+# Firebase sensitive files (NEVER COMMIT!)
+*firebase-adminsdk*.json
+google-services.json
+GoogleService-Info.plist
+firebase.json

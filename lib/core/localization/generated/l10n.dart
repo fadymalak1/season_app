@@ -213,6 +213,531 @@ class AppLocalizations {
   String get loading {
     return Intl.message('Loading', name: 'loading', desc: '', args: []);
   }
+
+  /// `Home`
+  String get home {
+    return Intl.message('Home', name: 'home', desc: '', args: []);
+  }
+
+  /// `Card`
+  String get card {
+    return Intl.message('Card', name: 'card', desc: '', args: []);
+  }
+
+  /// `Group`
+  String get group {
+    return Intl.message('Group', name: 'group', desc: '', args: []);
+  }
+
+  /// `Bag`
+  String get bag {
+    return Intl.message('Bag', name: 'bag', desc: '', args: []);
+  }
+
+  /// `Profile`
+  String get profile {
+    return Intl.message('Profile', name: 'profile', desc: '', args: []);
+  }
+
+  /// `Welcome to your home page`
+  String get homePageContent {
+    return Intl.message(
+      'Welcome to your home page',
+      name: 'homePageContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Manage your cards here`
+  String get cardPageContent {
+    return Intl.message(
+      'Manage your cards here',
+      name: 'cardPageContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View and manage your groups`
+  String get groupPageContent {
+    return Intl.message(
+      'View and manage your groups',
+      name: 'groupPageContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your shopping bag items`
+  String get bagPageContent {
+    return Intl.message(
+      'Your shopping bag items',
+      name: 'bagPageContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View and edit your profile`
+  String get profilePageContent {
+    return Intl.message(
+      'View and edit your profile',
+      name: 'profilePageContent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your email to receive reset code`
+  String get enterEmailToReceiveResetCode {
+    return Intl.message(
+      'Enter your email to receive reset code',
+      name: 'enterEmailToReceiveResetCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Send Reset Code`
+  String get sendResetCode {
+    return Intl.message(
+      'Send Reset Code',
+      name: 'sendResetCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm password is required`
+  String get confirmPasswordRequired {
+    return Intl.message(
+      'Confirm password is required',
+      name: 'confirmPasswordRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Passwords do not match`
+  String get passwordsDoNotMatch {
+    return Intl.message(
+      'Passwords do not match',
+      name: 'passwordsDoNotMatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `remaining`
+  String get remaining {
+    return Intl.message('remaining', name: 'remaining', desc: '', args: []);
+  }
+
+  /// `seconds`
+  String get seconds {
+    return Intl.message('seconds', name: 'seconds', desc: '', args: []);
+  }
+
+  /// `Code not sent?`
+  String get codeNotSent {
+    return Intl.message(
+      'Code not sent?',
+      name: 'codeNotSent',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Resend Code`
+  String get resendCode {
+    return Intl.message('Resend Code', name: 'resendCode', desc: '', args: []);
+  }
+
+  /// `Reset Password`
+  String get resetPassword {
+    return Intl.message(
+      'Reset Password',
+      name: 'resetPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter your new password`
+  String get enterNewPassword {
+    return Intl.message(
+      'Enter your new password',
+      name: 'enterNewPassword',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm new password is required`
+  String get confirmNewPasswordRequired {
+    return Intl.message(
+      'Confirm new password is required',
+      name: 'confirmNewPasswordRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logout`
+  String get logout {
+    return Intl.message('Logout', name: 'logout', desc: '', args: []);
+  }
+
+  /// `Are you sure you want to logout?`
+  String get logoutConfirmation {
+    return Intl.message(
+      'Are you sure you want to logout?',
+      name: 'logoutConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message('Cancel', name: 'cancel', desc: '', args: []);
+  }
+
+  /// `Yes`
+  String get yes {
+    return Intl.message('Yes', name: 'yes', desc: '', args: []);
+  }
+
+  /// `Edit Profile`
+  String get editProfile {
+    return Intl.message(
+      'Edit Profile',
+      name: 'editProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Profile`
+  String get updateProfile {
+    return Intl.message(
+      'Update Profile',
+      name: 'updateProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Name`
+  String get name {
+    return Intl.message('Name', name: 'name', desc: '', args: []);
+  }
+
+  /// `Nickname`
+  String get nickname {
+    return Intl.message('Nickname', name: 'nickname', desc: '', args: []);
+  }
+
+  /// `Birth Date`
+  String get birthDate {
+    return Intl.message('Birth Date', name: 'birthDate', desc: '', args: []);
+  }
+
+  /// `Gender`
+  String get gender {
+    return Intl.message('Gender', name: 'gender', desc: '', args: []);
+  }
+
+  /// `Male`
+  String get male {
+    return Intl.message('Male', name: 'male', desc: '', args: []);
+  }
+
+  /// `Female`
+  String get female {
+    return Intl.message('Female', name: 'female', desc: '', args: []);
+  }
+
+  /// `City`
+  String get city {
+    return Intl.message('City', name: 'city', desc: '', args: []);
+  }
+
+  /// `Currency`
+  String get currency {
+    return Intl.message('Currency', name: 'currency', desc: '', args: []);
+  }
+
+  /// `Coins`
+  String get coins {
+    return Intl.message('Coins', name: 'coins', desc: '', args: []);
+  }
+
+  /// `Trips`
+  String get trips {
+    return Intl.message('Trips', name: 'trips', desc: '', args: []);
+  }
+
+  /// `Select Image`
+  String get selectImage {
+    return Intl.message(
+      'Select Image',
+      name: 'selectImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Camera`
+  String get camera {
+    return Intl.message('Camera', name: 'camera', desc: '', args: []);
+  }
+
+  /// `Gallery`
+  String get gallery {
+    return Intl.message('Gallery', name: 'gallery', desc: '', args: []);
+  }
+
+  /// `Change Photo`
+  String get changePhoto {
+    return Intl.message(
+      'Change Photo',
+      name: 'changePhoto',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apply as Service Provider`
+  String get applyAsServiceProvider {
+    return Intl.message(
+      'Apply as Service Provider',
+      name: 'applyAsServiceProvider',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Profile updated successfully`
+  String get profileUpdatedSuccessfully {
+    return Intl.message(
+      'Profile updated successfully',
+      name: 'profileUpdatedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error loading profile`
+  String get errorLoadingProfile {
+    return Intl.message(
+      'Error loading profile',
+      name: 'errorLoadingProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error updating profile`
+  String get errorUpdatingProfile {
+    return Intl.message(
+      'Error updating profile',
+      name: 'errorUpdatingProfile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter your name`
+  String get pleaseEnterName {
+    return Intl.message(
+      'Please enter your name',
+      name: 'pleaseEnterName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Saving`
+  String get saving {
+    return Intl.message('Saving', name: 'saving', desc: '', args: []);
+  }
+
+  /// `Select Birth Date`
+  String get selectBirthDate {
+    return Intl.message(
+      'Select Birth Date',
+      name: 'selectBirthDate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Personal Information`
+  String get personalInformation {
+    return Intl.message(
+      'Personal Information',
+      name: 'personalInformation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Account Statistics`
+  String get accountStatistics {
+    return Intl.message(
+      'Account Statistics',
+      name: 'accountStatistics',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Optional`
+  String get optional {
+    return Intl.message('Optional', name: 'optional', desc: '', args: []);
+  }
+
+  /// `Settings`
+  String get settings {
+    return Intl.message('Settings', name: 'settings', desc: '', args: []);
+  }
+
+  /// `Language`
+  String get language {
+    return Intl.message('Language', name: 'language', desc: '', args: []);
+  }
+
+  /// `Select Language`
+  String get selectLanguage {
+    return Intl.message(
+      'Select Language',
+      name: 'selectLanguage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `English`
+  String get english {
+    return Intl.message('English', name: 'english', desc: '', args: []);
+  }
+
+  /// `Arabic`
+  String get arabic {
+    return Intl.message('Arabic', name: 'arabic', desc: '', args: []);
+  }
+
+  /// `Theme`
+  String get theme {
+    return Intl.message('Theme', name: 'theme', desc: '', args: []);
+  }
+
+  /// `Dark Mode`
+  String get darkMode {
+    return Intl.message('Dark Mode', name: 'darkMode', desc: '', args: []);
+  }
+
+  /// `Notifications`
+  String get notifications {
+    return Intl.message(
+      'Notifications',
+      name: 'notifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Push Notifications`
+  String get pushNotifications {
+    return Intl.message(
+      'Push Notifications',
+      name: 'pushNotifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Email Notifications`
+  String get emailNotifications {
+    return Intl.message(
+      'Email Notifications',
+      name: 'emailNotifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `About`
+  String get about {
+    return Intl.message('About', name: 'about', desc: '', args: []);
+  }
+
+  /// `About App`
+  String get aboutApp {
+    return Intl.message('About App', name: 'aboutApp', desc: '', args: []);
+  }
+
+  /// `Privacy Policy`
+  String get privacyPolicy {
+    return Intl.message(
+      'Privacy Policy',
+      name: 'privacyPolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Terms and Conditions`
+  String get termsAndConditions {
+    return Intl.message(
+      'Terms and Conditions',
+      name: 'termsAndConditions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Version`
+  String get version {
+    return Intl.message('Version', name: 'version', desc: '', args: []);
+  }
+
+  /// `Account`
+  String get account {
+    return Intl.message('Account', name: 'account', desc: '', args: []);
+  }
+
+  /// `Delete Account`
+  String get deleteAccount {
+    return Intl.message(
+      'Delete Account',
+      name: 'deleteAccount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Language changed successfully`
+  String get languageChanged {
+    return Intl.message(
+      'Language changed successfully',
+      name: 'languageChanged',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `General`
+  String get general {
+    return Intl.message('General', name: 'general', desc: '', args: []);
+  }
+
+  /// `Preferences`
+  String get preferences {
+    return Intl.message('Preferences', name: 'preferences', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

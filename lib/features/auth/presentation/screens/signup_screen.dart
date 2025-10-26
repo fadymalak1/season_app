@@ -1,5 +1,4 @@
 import 'package:country_code_picker/country_code_picker.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +6,7 @@ import 'package:season_app/core/constants/app_assets.dart';
 import 'package:season_app/core/constants/app_colors.dart';
 import 'package:season_app/core/localization/generated/l10n.dart';
 import 'package:season_app/core/router/routes.dart';
+import 'package:season_app/core/services/notification_service.dart';
 import 'package:season_app/core/utils/validators.dart';
 import 'package:season_app/features/auth/presentation/widgets/agreement_policy.dart';
 import 'package:season_app/features/auth/presentation/widgets/or_divider.dart';
@@ -17,14 +17,31 @@ import 'package:season_app/shared/providers/locale_provider.dart';
 import 'package:season_app/shared/widgets/custom_button.dart';
 import 'package:season_app/shared/widgets/custom_text_field.dart';
 
-class SignUpScreen extends ConsumerWidget {
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
+  final formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Clear any previous errors when screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(signupControllerProvider.notifier).clearError();
+      ref.read(signupControllerProvider.notifier).clearMessage();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final tr = AppLocalizations.of(context);
     final isArabic = ref.watch(localeProvider).languageCode == 'ar';
-    final _formKey = GlobalKey<FormState>();
     final firstNameController = ref.watch(firstNameControllerProvider);
     final lastNameController = ref.watch(lastNameControllerProvider);
     final emailController = ref.watch(emailControllerProvider);
@@ -35,13 +52,23 @@ class SignUpScreen extends ConsumerWidget {
     final signupNotifier = ref.read(signupControllerProvider.notifier);
     CountryCode selectedCode = CountryCode.fromDialCode('+966'); // الافتراضي مصر
 
+    // Listen to signup state changes
+    ref.listen(signupControllerProvider, (previous, next) {
+      if (next.error != null) {
+        SnackbarHelper.error(context, next.error.toString());
+      } else if (next.message != null) {
+        SnackbarHelper.success(context, next.message.toString());
+        context.push(Routes.verifyOtp);
+      }
+    });
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 30),
           child: Center(
             child: Form(
-              key: _formKey,
+              key: formKey,
               child: Column(
                 children: [
                   Image.asset(AppAssets.seasonAuthImage, height: 80),
@@ -92,21 +119,25 @@ class SignUpScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 10),
                         // Phone
-                        CustomTextField(
-                          hintText: tr.phone,
-                          keyboardType: TextInputType.phone,
-                          showCountryPicker: true,
-                          initialCountry: selectedCode,
-                          onCountryChanged: (code) {
-                            selectedCode = code;
-                          },
-                          onChanged: (val) {
-                            final fullNumber = '${selectedCode.dialCode}$val';
-                            ref.read(phoneProvider.notifier).state = fullNumber;
-                          },
-                          validator: (value) =>
-                              Validators.phone(value, isArabic: isArabic),
-                          controller: phoneController,
+                        Directionality( 
+                          textDirection: TextDirection.ltr,
+                          child: CustomTextField(
+                            hintText: tr.phone,
+                            textDirection: TextDirection.ltr,
+                            keyboardType: TextInputType.phone,
+                            showCountryPicker: true,
+                            initialCountry: selectedCode,
+                            onCountryChanged: (code) {
+                              selectedCode = code;
+                            },
+                            onChanged: (val) {
+                              final fullNumber = '${selectedCode.dialCode}$val';
+                              ref.read(phoneProvider.notifier).state = fullNumber;
+                            },
+                            validator: (value) =>
+                                Validators.phone(value, isArabic: isArabic),
+                            controller: phoneController,
+                          ),
                         ),
                         const SizedBox(height: 10),
                         // Password
@@ -143,10 +174,10 @@ class SignUpScreen extends ConsumerWidget {
                           onChanged: (val) => ref.read(confirmPasswordProvider.notifier).state = val,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return isArabic ? 'تأكيد كلمة المرور مطلوب' : 'Confirm password is required';
+                              return tr.confirmPasswordRequired;
                             }
                             if (value != ref.watch(passwordProvider)) {
-                              return isArabic ? 'كلمتا المرور غير متطابقتين' : 'Passwords do not match';
+                              return tr.passwordsDoNotMatch;
                             }
                             return null;
                           },
@@ -160,7 +191,11 @@ class SignUpScreen extends ConsumerWidget {
                           onPressed: signupState.isLoading
                               ? null
                               : () async {
-                            if (_formKey.currentState!.validate()) {
+                            if (formKey.currentState!.validate()) {
+                              // Get FCM token
+                              final fcmToken = await NotificationService().getSavedFCMToken() ?? 
+                                  NotificationService().fcmToken;
+                              
                               await signupNotifier.register(
                                 firstName: ref.watch(firstNameProvider),
                                 lastName: ref.watch(lastNameProvider),
@@ -168,14 +203,9 @@ class SignUpScreen extends ConsumerWidget {
                                 phone: ref.watch(phoneProvider),
                                 password: ref.watch(passwordProvider),
                                 passwordConfirmation: ref.watch(confirmPasswordProvider),
+                                notificationToken: fcmToken,
                               );
-
-                              if (signupState.error != null) {
-                                SnackbarHelper.error(context, signupState.error.toString());
-                              } else if (signupState.message != null) {
-                                SnackbarHelper.success(context, signupState.message.toString());
-                                context.push(Routes.verifyOtp);
-                              }
+                              // The listener will handle the response
                             }
                           },
                         ),

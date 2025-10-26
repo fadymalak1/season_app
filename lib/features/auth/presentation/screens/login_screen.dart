@@ -1,6 +1,5 @@
 import 'dart:developer';
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,25 +7,64 @@ import 'package:season_app/core/constants/app_assets.dart';
 import 'package:season_app/core/constants/app_colors.dart';
 import 'package:season_app/core/localization/generated/l10n.dart';
 import 'package:season_app/core/router/routes.dart';
+import 'package:season_app/core/services/notification_service.dart';
 import 'package:season_app/core/utils/validators.dart';
 import 'package:season_app/features/auth/presentation/widgets/or_divider.dart';
 import 'package:season_app/features/auth/presentation/widgets/social_icons.dart';
 import 'package:season_app/features/auth/providers.dart';
+import 'package:season_app/shared/helpers/snackbar_helper.dart';
 import 'package:season_app/shared/providers/locale_provider.dart';
 import 'package:season_app/shared/widgets/custom_button.dart';
 import 'package:season_app/shared/widgets/custom_text_field.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  @override
+  void initState() {
+    super.initState();
+    
+    // Clear any previous errors when screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(loginControllerProvider.notifier).clearError();
+      ref.read(loginControllerProvider.notifier).clearMessage();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final tr = AppLocalizations.of(context);
     final isArabic = ref.watch(localeProvider).languageCode == 'ar';
     log(ref.watch(localeProvider).languageCode);
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
     final emailController = ref.watch(loginEmailControllerProvider);
     final passwordController = ref.watch(loginPasswordControllerProvider);
+    final loginState = ref.watch(loginControllerProvider);
+    
+    // Listen to login state changes
+    ref.listen(loginControllerProvider, (previous, next) async {
+      if (next.error != null) {
+        SnackbarHelper.error(context, next.error.toString());
+      } else if (next.message != null && next.isLoggedIn) {
+        SnackbarHelper.success(context, next.message.toString());
+        
+        // Subscribe to notification topics after successful login
+        try {
+          await NotificationService().subscribeToAllUsers();
+        } catch (e) {
+          debugPrint('Error subscribing to topics: $e');
+        }
+        
+        if (context.mounted) {
+          context.go(Routes.home);
+        }
+      }
+    });
 
     return Scaffold(
       body: SafeArea(
@@ -35,7 +73,7 @@ class LoginScreen extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: 30),
           child: Center(
             child: Form(
-              key: _formKey,
+              key: formKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -94,7 +132,9 @@ class LoginScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 5),
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            context.push(Routes.forgotPassword);
+                          },
                           child: Text(
                             tr.forgetPassword,
                             style: const TextStyle(
@@ -105,13 +145,21 @@ class LoginScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 20),
                         CustomButton(
+                          isLoading: loginState.isLoading,
                           text: tr.login,
                           color: AppColors.primary,
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              print("Email: ${ref.watch(loginEmailProvider)}");
-                              print("Password: ${ref.watch(loginPasswordProvider)}");
-                              // هنا ممكن تحط كود الـ login الحقيقي
+                          onPressed: loginState.isLoading ? null : () async {
+                            if (formKey.currentState!.validate()) {
+                              // Get FCM token
+                              final fcmToken = await NotificationService().getSavedFCMToken() ?? 
+                                  NotificationService().fcmToken;
+                              
+                              await ref.read(loginControllerProvider.notifier).login(
+                                email: ref.watch(loginEmailProvider),
+                                password: ref.watch(loginPasswordProvider),
+                                notificationToken: fcmToken,
+                              );
+                              // The listener will handle navigation
                             }
                           },
                         ),

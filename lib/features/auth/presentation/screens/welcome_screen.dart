@@ -51,7 +51,7 @@ class WelcomeScreen extends StatelessWidget {
           ),
           // Button at the bottom
           Positioned(
-            bottom: 20,  // Adjust the distance from the bottom as needed
+            bottom: 20, 
             left: 20,
             right: 20,
             child: CustomButton(

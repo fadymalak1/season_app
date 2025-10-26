@@ -1,6 +1,10 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:season_app/core/services/firebase_service.dart';
+import 'package:season_app/core/services/local_storage_service.dart';
+import 'package:season_app/core/services/notification_service.dart';
 import 'package:season_app/shared/providers/locale_provider.dart';
 import 'package:season_app/shared/providers/theme_provider.dart';
 import 'package:svg_image/svg_image.dart';
@@ -10,7 +14,22 @@ import 'core/themes/app_theme.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize local storage service
+  await LocalStorageService.init();
+  
+  // Initialize SVG config
   await SvgImageConfig.init();
+
+  // Initialize Firebase and Notifications
+  try {
+    await FirebaseService.initialize();
+    
+    // Register background message handler
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  } catch (e) {
+    debugPrint('❌ Error initializing Firebase: $e');
+  }
 
   runApp(ProviderScope(child: const MyApp()));
 }
@@ -33,7 +52,6 @@ class MyApp extends ConsumerWidget {
             debugShowCheckedModeBanner: false,
             locale: locale,
             theme: AppTheme.lightTheme,
-            // darkTheme: AppTheme.darkTheme,
             themeMode: themeMode,
             supportedLocales: AppLocalizations.delegate.supportedLocales,
             localizationsDelegates: const [

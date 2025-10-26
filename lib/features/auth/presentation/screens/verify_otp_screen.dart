@@ -8,7 +8,7 @@ import 'package:season_app/core/constants/app_colors.dart';
 import 'package:season_app/core/localization/generated/l10n.dart';
 import 'package:season_app/core/router/routes.dart';
 import 'package:season_app/features/auth/providers.dart';
-import 'package:season_app/shared/providers/locale_provider.dart';
+import 'package:season_app/shared/helpers/snackbar_helper.dart';
 import 'package:season_app/shared/widgets/custom_button.dart';
 
 class VerifyOtpScreen extends ConsumerStatefulWidget {
@@ -24,7 +24,12 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen> {
   @override
   void initState() {
     super.initState();
-    startTimer();
+    // Defer timer start until after widget tree is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      startTimer();
+      ref.read(otpControllerProvider.notifier).clearError();
+      ref.read(otpControllerProvider.notifier).clearMessage();
+    });
   }
 
   void startTimer() {
@@ -62,7 +67,17 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen> {
     final email = ref.watch(emailProvider);
     final time = ref.watch(otpTimerProvider);
     final isRunning = ref.watch(otpTimerRunningProvider);
-    final isArabic = ref.watch(localeProvider).languageCode == 'ar';
+    final otpState = ref.watch(otpControllerProvider);
+    
+    // Listen to OTP state changes
+    ref.listen(otpControllerProvider, (previous, next) {
+      if (next.error != null) {
+        SnackbarHelper.error(context, next.error.toString());
+      } else if (next.message != null && next.isVerified) {
+        SnackbarHelper.success(context, next.message.toString());
+        context.go(Routes.home);
+      }
+    });
 
     return Scaffold(
       resizeToAvoidBottomInset: true, // 👈 مهم عشان الشاشة تتحرك مع الكيبورد
@@ -132,17 +147,20 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen> {
                   children: [
                     Text(
                       isRunning
-                          ? "${isArabic ? "متبقي" : "remaining"} ${formatTime(time)}${isArabic ? " ثانية" : " seconds"}"
-                          : (isArabic ? "لم يصل الرمز؟" : "Code not sent?"),
+                          ? "${tr.remaining} ${formatTime(time)} ${tr.seconds}"
+                          : tr.codeNotSent,
                       style: const TextStyle(
                           fontWeight: FontWeight.w500, color: Colors.grey),
                     ),
                     const SizedBox(width: 5),
                     if (!isRunning)
                       TextButton(
-                        onPressed: startTimer,
+                        onPressed: () async {
+                          await ref.read(otpControllerProvider.notifier).resendOtp(email: email);
+                          startTimer();
+                        },
                         child: Text(
-                          isArabic ? "إعادة الإرسال" : "Resend Code",
+                          tr.resendCode,
                           style: const TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.bold,
@@ -153,12 +171,17 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen> {
                 ),
                 const SizedBox(height: 30),
                 CustomButton(
+                  isLoading: otpState.isLoading,
                   text: tr.verify,
                   color: AppColors.primary,
-                  onPressed: pinController.text.length < 4
+                  onPressed: (pinController.text.length < 4 || otpState.isLoading)
                       ? null
-                      : () {
-                    context.go(Routes.home);
+                      : () async {
+                    await ref.read(otpControllerProvider.notifier).verifyOtp(
+                      email: email,
+                      otp: pinController.text,
+                    );
+                    // The listener will handle navigation
                   },
                 ),
               ],

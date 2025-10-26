@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:season_app/features/auth/data/repositories/auth_repository.dart';
 
@@ -57,5 +56,13 @@ class SignupController extends StateNotifier<SignupState> {
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
+  }
+
+  void clearError() {
+    state = state.copyWith(error: null);
+  }
+
+  void clearMessage() {
+    state = state.copyWith(message: null);
   }
 }

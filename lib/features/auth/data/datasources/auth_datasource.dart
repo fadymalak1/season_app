@@ -32,4 +32,121 @@ class AuthRemoteDataSource {
 
     return response;
   }
+
+  Future<Response> loginUser({
+    required String email,
+    required String password,
+    String? notificationToken,
+  }) async {
+    final data = {
+      "email": email,
+      "password": password,
+      "notification_token": notificationToken ?? "",
+    };
+
+    final response = await dio.post(
+      ApiEndpoints.login,
+      data: data,
+    );
+
+    return response;
+  }
+
+  Future<Response> verifyOtp({
+    required String email,
+    required String otp,
+  }) async {
+    final data = {
+      "email": email,
+      "otp": otp,
+    };
+
+    final response = await dio.post(
+      ApiEndpoints.verifyOtp,
+      data: data,
+    );
+
+    return response;
+  }
+
+  Future<Response> resendOtp({
+    required String email,
+  }) async {
+    final data = {
+      "email": email,
+    };
+
+    final response = await dio.post(
+      ApiEndpoints.resendOtp,
+      data: data,
+    );
+
+    return response;
+  }
+
+  Future<Response> forgotPassword({
+    required String email,
+  }) async {
+    final data = {
+      "email": email,
+    };
+
+    final response = await dio.post(
+      ApiEndpoints.forgotPassword,
+      data: data,
+    );
+
+    return response;
+  }
+
+  Future<Response> verifyResetOtp({
+    required String email,
+    required String otp,
+  }) async {
+    final data = {
+      "email": email,
+      "otp": otp,
+    };
+
+    final response = await dio.post(
+      ApiEndpoints.verifyResetOtp,
+      data: data,
+    );
+
+    return response;
+  }
+
+  Future<Response> resendResetOtp({
+    required String email,
+  }) async {
+    final data = {
+      "email": email,
+    };
+
+    final response = await dio.post(
+      ApiEndpoints.resendResetOtp,
+      data: data,
+    );
+
+    return response;
+  }
+
+  Future<Response> resetPassword({
+    required String email,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    final data = {
+      "email": email,
+      "password": password,
+      "password_confirmation": passwordConfirmation,
+    };
+
+    final response = await dio.post(
+      ApiEndpoints.resetPassword,
+      data: data,
+    );
+
+    return response;
+  }
 }
