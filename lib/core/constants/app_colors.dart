@@ -22,4 +22,13 @@ class AppColors {
 
   // 🧱 Borders
   static const Color border = Color(0xFFE0E0E0);
+
+  // 🎒 Bag Page Colors (derived from primary palette)
+  static const Color bagGradientStart = primary;
+  static const Color bagGradientEnd = secondary;
+  static const Color bagPrimaryButton = primary;
+  static const Color bagSecondaryButtonBackground = Color(0xFFFFF3E0); // Light tone of secondary
+  static const Color bagSecondaryButtonText = secondary;
+  static const Color bagTipsBackground = Color(0xFFEAF2F8); // Light tone of primary
+  static const Color bagTipsText = primary;
 }

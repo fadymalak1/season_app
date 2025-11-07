@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:season_app/core/localization/generated/l10n.dart';
 
 class ImagePickerHelper {
   static final ImagePicker _picker = ImagePicker();
@@ -22,7 +23,11 @@ class ImagePickerHelper {
     return images.map((e) => File(e.path)).toList();
   }
 
-  static Future<void> showPickerDialog(BuildContext context, Function(File?) onImagePicked) async {
+  static Future<void> showPickerDialog(
+    BuildContext context,
+    Function(File?) onImagePicked,
+    AppLocalizations loc,
+  ) async {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -34,7 +39,7 @@ class ImagePickerHelper {
             children: [
               ListTile(
                 leading: const Icon(Icons.photo_library),
-                title: const Text('اختيار من المعرض'),
+                title: Text(loc.imagePickerGallery),
                 onTap: () async {
                   Navigator.pop(context);
                   final file = await pickFromGallery();
@@ -43,7 +48,7 @@ class ImagePickerHelper {
               ),
               ListTile(
                 leading: const Icon(Icons.camera_alt),
-                title: const Text('استخدام الكاميرا'),
+                title: Text(loc.imagePickerCamera),
                 onTap: () async {
                   Navigator.pop(context);
                   final file = await pickFromCamera();

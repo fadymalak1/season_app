@@ -738,6 +738,1491 @@ class AppLocalizations {
   String get preferences {
     return Intl.message('Preferences', name: 'preferences', desc: '', args: []);
   }
+
+  /// `Don't Get Lost`
+  String get dontGetLost {
+    return Intl.message(
+      'Don\'t Get Lost',
+      name: 'dontGetLost',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Track your group safely`
+  String get trackYourGroup {
+    return Intl.message(
+      'Track your group safely',
+      name: 'trackYourGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Groups Yet`
+  String get noGroupsYet {
+    return Intl.message(
+      'No Groups Yet',
+      name: 'noGroupsYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create a new group\nor join an existing one`
+  String get createNewGroup {
+    return Intl.message(
+      'Create a new group\nor join an existing one',
+      name: 'createNewGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create Group`
+  String get createGroup {
+    return Intl.message(
+      'Create Group',
+      name: 'createGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Join Group`
+  String get joinGroup {
+    return Intl.message('Join Group', name: 'joinGroup', desc: '', args: []);
+  }
+
+  /// `Scan QR Code`
+  String get scanQrCode {
+    return Intl.message('Scan QR Code', name: 'scanQrCode', desc: '', args: []);
+  }
+
+  /// `Enter Code Manually`
+  String get enterCodeManually {
+    return Intl.message(
+      'Enter Code Manually',
+      name: 'enterCodeManually',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Place QR code inside the frame`
+  String get placeQrCode {
+    return Intl.message(
+      'Place QR code inside the frame',
+      name: 'placeQrCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Scanning will start automatically`
+  String get scanningWillStart {
+    return Intl.message(
+      'Scanning will start automatically',
+      name: 'scanningWillStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Join Now`
+  String get joinNow {
+    return Intl.message('Join Now', name: 'joinNow', desc: '', args: []);
+  }
+
+  /// `OR`
+  String get orText {
+    return Intl.message('OR', name: 'orText', desc: '', args: []);
+  }
+
+  /// `Or ask for code from group owner`
+  String get askForCode {
+    return Intl.message(
+      'Or ask for code from group owner',
+      name: 'askForCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invite Code`
+  String get inviteCode {
+    return Intl.message('Invite Code', name: 'inviteCode', desc: '', args: []);
+  }
+
+  /// `Enter the invite code to join the group`
+  String get enterInviteCode {
+    return Intl.message(
+      'Enter the invite code to join the group',
+      name: 'enterInviteCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter invite code`
+  String get pleaseEnterInviteCode {
+    return Intl.message(
+      'Please enter invite code',
+      name: 'pleaseEnterInviteCode',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invalid code format`
+  String get invalidCodeFormat {
+    return Intl.message(
+      'Invalid code format',
+      name: 'invalidCodeFormat',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Group Name`
+  String get groupName {
+    return Intl.message('Group Name', name: 'groupName', desc: '', args: []);
+  }
+
+  /// `Ex: Dubai Trip - Family`
+  String get groupNameExample {
+    return Intl.message(
+      'Ex: Dubai Trip - Family',
+      name: 'groupNameExample',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter group name`
+  String get pleaseEnterGroupName {
+    return Intl.message(
+      'Please enter group name',
+      name: 'pleaseEnterGroupName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Description`
+  String get description {
+    return Intl.message('Description', name: 'description', desc: '', args: []);
+  }
+
+  /// `Description (Optional)`
+  String get descriptionOptional {
+    return Intl.message(
+      'Description (Optional)',
+      name: 'descriptionOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add a description`
+  String get addDescription {
+    return Intl.message(
+      'Add a description',
+      name: 'addDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Safety Radius`
+  String get safetyRadius {
+    return Intl.message(
+      'Safety Radius',
+      name: 'safetyRadius',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `meters`
+  String get meters {
+    return Intl.message('meters', name: 'meters', desc: '', args: []);
+  }
+
+  /// `Distance allowed before sending alert`
+  String get distanceAllowed {
+    return Intl.message(
+      'Distance allowed before sending alert',
+      name: 'distanceAllowed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable Notifications`
+  String get enableNotifications {
+    return Intl.message(
+      'Enable Notifications',
+      name: 'enableNotifications',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get instant alerts`
+  String get getInstantAlerts {
+    return Intl.message(
+      'Get instant alerts',
+      name: 'getInstantAlerts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Join a Group`
+  String get joinAGroup {
+    return Intl.message('Join a Group', name: 'joinAGroup', desc: '', args: []);
+  }
+
+  /// `Create New Group`
+  String get createNewGroupTitle {
+    return Intl.message(
+      'Create New Group',
+      name: 'createNewGroupTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Create a group to track your friends and family`
+  String get createGroupDescription {
+    return Intl.message(
+      'Create a group to track your friends and family',
+      name: 'createGroupDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Groups`
+  String get groups {
+    return Intl.message('Groups', name: 'groups', desc: '', args: []);
+  }
+
+  /// `Alerts`
+  String get alerts {
+    return Intl.message('Alerts', name: 'alerts', desc: '', args: []);
+  }
+
+  /// `Radius`
+  String get radius {
+    return Intl.message('Radius', name: 'radius', desc: '', args: []);
+  }
+
+  /// `Owner`
+  String get owner {
+    return Intl.message('Owner', name: 'owner', desc: '', args: []);
+  }
+
+  /// `Member`
+  String get member {
+    return Intl.message('Member', name: 'member', desc: '', args: []);
+  }
+
+  /// `from center`
+  String get fromCenter {
+    return Intl.message('from center', name: 'fromCenter', desc: '', args: []);
+  }
+
+  /// `Error Loading Group`
+  String get errorLoadingGroup {
+    return Intl.message(
+      'Error Loading Group',
+      name: 'errorLoadingGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Group not found`
+  String get groupNotFound {
+    return Intl.message(
+      'Group not found',
+      name: 'groupNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error Details:`
+  String get errorDetails {
+    return Intl.message(
+      'Error Details:',
+      name: 'errorDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Endpoint:`
+  String get endpoint {
+    return Intl.message('Endpoint:', name: 'endpoint', desc: '', args: []);
+  }
+
+  /// `Retry`
+  String get retry {
+    return Intl.message('Retry', name: 'retry', desc: '', args: []);
+  }
+
+  /// `Go Back`
+  String get goBack {
+    return Intl.message('Go Back', name: 'goBack', desc: '', args: []);
+  }
+
+  /// `Leave Group`
+  String get leaveGroup {
+    return Intl.message('Leave Group', name: 'leaveGroup', desc: '', args: []);
+  }
+
+  /// `Delete Group`
+  String get deleteGroup {
+    return Intl.message(
+      'Delete Group',
+      name: 'deleteGroup',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invite Code`
+  String get inviteCodeTitle {
+    return Intl.message(
+      'Invite Code',
+      name: 'inviteCodeTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Copy`
+  String get copy {
+    return Intl.message('Copy', name: 'copy', desc: '', args: []);
+  }
+
+  /// `Copied!`
+  String get copied {
+    return Intl.message('Copied!', name: 'copied', desc: '', args: []);
+  }
+
+  /// `Close`
+  String get close {
+    return Intl.message('Close', name: 'close', desc: '', args: []);
+  }
+
+  /// `SOS Emergency`
+  String get sosEmergency {
+    return Intl.message(
+      'SOS Emergency',
+      name: 'sosEmergency',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `🚨 SOS Alert!`
+  String get sosAlert {
+    return Intl.message('🚨 SOS Alert!', name: 'sosAlert', desc: '', args: []);
+  }
+
+  /// `I need help!`
+  String get needHelp {
+    return Intl.message('I need help!', name: 'needHelp', desc: '', args: []);
+  }
+
+  /// `Joining...`
+  String get joining {
+    return Intl.message('Joining...', name: 'joining', desc: '', args: []);
+  }
+
+  /// `Create`
+  String get create {
+    return Intl.message('Create', name: 'create', desc: '', args: []);
+  }
+
+  /// `Scan QR`
+  String get scanQr {
+    return Intl.message('Scan QR', name: 'scanQr', desc: '', args: []);
+  }
+
+  /// `SOS Alerts`
+  String get sosAlerts {
+    return Intl.message('SOS Alerts', name: 'sosAlerts', desc: '', args: []);
+  }
+
+  /// `🚨 Emergency Alerts`
+  String get emergencyAlerts {
+    return Intl.message(
+      '🚨 Emergency Alerts',
+      name: 'emergencyAlerts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Active Alerts`
+  String get activeAlerts {
+    return Intl.message(
+      'Active Alerts',
+      name: 'activeAlerts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Active Alerts`
+  String get noActiveAlerts {
+    return Intl.message(
+      'No Active Alerts',
+      name: 'noActiveAlerts',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Great! No emergency alerts at the moment.\nYour group is safe.`
+  String get noAlertsMessage {
+    return Intl.message(
+      'Great! No emergency alerts at the moment.\nYour group is safe.',
+      name: 'noAlertsMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Alert from`
+  String get alertFrom {
+    return Intl.message('Alert from', name: 'alertFrom', desc: '', args: []);
+  }
+
+  /// `Alert Time`
+  String get alertTime {
+    return Intl.message('Alert Time', name: 'alertTime', desc: '', args: []);
+  }
+
+  /// `Message`
+  String get alertMessage {
+    return Intl.message('Message', name: 'alertMessage', desc: '', args: []);
+  }
+
+  /// `Resolve Alert`
+  String get resolveAlert {
+    return Intl.message(
+      'Resolve Alert',
+      name: 'resolveAlert',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Mark as Resolved`
+  String get markAsResolved {
+    return Intl.message(
+      'Mark as Resolved',
+      name: 'markAsResolved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Alert Resolved`
+  String get alertResolved {
+    return Intl.message(
+      'Alert Resolved',
+      name: 'alertResolved',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Emergency alert has been resolved`
+  String get alertResolvedMessage {
+    return Intl.message(
+      'Emergency alert has been resolved',
+      name: 'alertResolvedMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View on Map`
+  String get viewOnMap {
+    return Intl.message('View on Map', name: 'viewOnMap', desc: '', args: []);
+  }
+
+  /// `Location`
+  String get location {
+    return Intl.message('Location', name: 'location', desc: '', args: []);
+  }
+
+  /// `Distance`
+  String get distance {
+    return Intl.message('Distance', name: 'distance', desc: '', args: []);
+  }
+
+  /// `ago`
+  String get ago {
+    return Intl.message('ago', name: 'ago', desc: '', args: []);
+  }
+
+  /// `minutes`
+  String get minutes {
+    return Intl.message('minutes', name: 'minutes', desc: '', args: []);
+  }
+
+  /// `hours`
+  String get hours {
+    return Intl.message('hours', name: 'hours', desc: '', args: []);
+  }
+
+  /// `days`
+  String get days {
+    return Intl.message('days', name: 'days', desc: '', args: []);
+  }
+
+  /// `Map View`
+  String get mapView {
+    return Intl.message('Map View', name: 'mapView', desc: '', args: []);
+  }
+
+  /// `List View`
+  String get listView {
+    return Intl.message('List View', name: 'listView', desc: '', args: []);
+  }
+
+  /// `Emergency Location`
+  String get emergencyLocation {
+    return Intl.message(
+      'Emergency Location',
+      name: 'emergencyLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap to resolve this alert`
+  String get tapToResolve {
+    return Intl.message(
+      'Tap to resolve this alert',
+      name: 'tapToResolve',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Resolve Alert?`
+  String get confirmResolve {
+    return Intl.message(
+      'Resolve Alert?',
+      name: 'confirmResolve',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to mark this alert as resolved?`
+  String get confirmResolveMessage {
+    return Intl.message(
+      'Are you sure you want to mark this alert as resolved?',
+      name: 'confirmResolveMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Resolved`
+  String get resolved {
+    return Intl.message('Resolved', name: 'resolved', desc: '', args: []);
+  }
+
+  /// `Pending`
+  String get pending {
+    return Intl.message('Pending', name: 'pending', desc: '', args: []);
+  }
+
+  /// `Just now`
+  String get justNow {
+    return Intl.message('Just now', name: 'justNow', desc: '', args: []);
+  }
+
+  /// `Get Directions`
+  String get getDirections {
+    return Intl.message(
+      'Get Directions',
+      name: 'getDirections',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Directions to Emergency Location`
+  String get directionsToAlert {
+    return Intl.message(
+      'Directions to Emergency Location',
+      name: 'directionsToAlert',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open in Maps`
+  String get openInMaps {
+    return Intl.message('Open in Maps', name: 'openInMaps', desc: '', args: []);
+  }
+
+  /// `Get directions to this emergency location using your preferred maps app`
+  String get directionsDescription {
+    return Intl.message(
+      'Get directions to this emergency location using your preferred maps app',
+      name: 'directionsDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No maps app found on your device`
+  String get mapsAppNotFound {
+    return Intl.message(
+      'No maps app found on your device',
+      name: 'mapsAppNotFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Directions`
+  String get directions {
+    return Intl.message('Directions', name: 'directions', desc: '', args: []);
+  }
+
+  /// `Points`
+  String get points {
+    return Intl.message('Points', name: 'points', desc: '', args: []);
+  }
+
+  /// `Loyalty Card`
+  String get loyaltyCard {
+    return Intl.message(
+      'Loyalty Card',
+      name: 'loyaltyCard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Error loading card data`
+  String get errorLoadingCardData {
+    return Intl.message(
+      'Error loading card data',
+      name: 'errorLoadingCardData',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loyalty Points`
+  String get loyaltyPoints {
+    return Intl.message(
+      'Loyalty Points',
+      name: 'loyaltyPoints',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `How to use the card`
+  String get howToUseCard {
+    return Intl.message(
+      'How to use the card',
+      name: 'howToUseCard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use the QR code to link with devices within secure groups`
+  String get qrCodeUsage {
+    return Intl.message(
+      'Use the QR code to link with devices within secure groups',
+      name: 'qrCodeUsage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Collect loyalty points when browsing and using partner services`
+  String get collectPoints {
+    return Intl.message(
+      'Collect loyalty points when browsing and using partner services',
+      name: 'collectPoints',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Get exclusive rewards`
+  String get exclusiveRewards {
+    return Intl.message(
+      'Get exclusive rewards',
+      name: 'exclusiveRewards',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Read our privacy policy`
+  String get readPrivacyPolicy {
+    return Intl.message(
+      'Read our privacy policy',
+      name: 'readPrivacyPolicy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Terms of service`
+  String get termsOfService {
+    return Intl.message(
+      'Terms of service',
+      name: 'termsOfService',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This action cannot be undone. All your data will be permanently deleted.`
+  String get deleteAccountWarning {
+    return Intl.message(
+      'This action cannot be undone. All your data will be permanently deleted.',
+      name: 'deleteAccountWarning',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New Service`
+  String get newService {
+    return Intl.message('New Service', name: 'newService', desc: '', args: []);
+  }
+
+  /// `Edit Service`
+  String get editService {
+    return Intl.message(
+      'Edit Service',
+      name: 'editService',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service Type`
+  String get serviceType {
+    return Intl.message(
+      'Service Type',
+      name: 'serviceType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose file`
+  String get chooseFile {
+    return Intl.message('Choose file', name: 'chooseFile', desc: '', args: []);
+  }
+
+  /// `Commercial Register (PDF)`
+  String get commercialRegister {
+    return Intl.message(
+      'Commercial Register (PDF)',
+      name: 'commercialRegister',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select on Map`
+  String get selectOnMap {
+    return Intl.message(
+      'Select on Map',
+      name: 'selectOnMap',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm`
+  String get confirm {
+    return Intl.message('Confirm', name: 'confirm', desc: '', args: []);
+  }
+
+  /// `Details`
+  String get details {
+    return Intl.message('Details', name: 'details', desc: '', args: []);
+  }
+
+  /// `Status`
+  String get status {
+    return Intl.message('Status', name: 'status', desc: '', args: []);
+  }
+
+  /// `Latitude`
+  String get latitude {
+    return Intl.message('Latitude', name: 'latitude', desc: '', args: []);
+  }
+
+  /// `Longitude`
+  String get longitude {
+    return Intl.message('Longitude', name: 'longitude', desc: '', args: []);
+  }
+
+  /// `Create a service`
+  String get createService {
+    return Intl.message(
+      'Create a service',
+      name: 'createService',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Address`
+  String get address {
+    return Intl.message('Address', name: 'address', desc: '', args: []);
+  }
+
+  /// `Edit`
+  String get edit {
+    return Intl.message('Edit', name: 'edit', desc: '', args: []);
+  }
+
+  /// `Delete`
+  String get delete {
+    return Intl.message('Delete', name: 'delete', desc: '', args: []);
+  }
+
+  /// `Service details`
+  String get serviceDetails {
+    return Intl.message(
+      'Service details',
+      name: 'serviceDetails',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your services`
+  String get yourServices {
+    return Intl.message(
+      'Your services',
+      name: 'yourServices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You have no services yet`
+  String get noServicesYet {
+    return Intl.message(
+      'You have no services yet',
+      name: 'noServicesYet',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Open commercial register`
+  String get openRegister {
+    return Intl.message(
+      'Open commercial register',
+      name: 'openRegister',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select location`
+  String get selectLocation {
+    return Intl.message(
+      'Select location',
+      name: 'selectLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete service?`
+  String get areYouSureDelete {
+    return Intl.message(
+      'Delete service?',
+      name: 'areYouSureDelete',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This will permanently remove the service.`
+  String get areYouSureDeleteMessage {
+    return Intl.message(
+      'This will permanently remove the service.',
+      name: 'areYouSureDeleteMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update`
+  String get update {
+    return Intl.message('Update', name: 'update', desc: '', args: []);
+  }
+
+  /// `Service name`
+  String get serviceName {
+    return Intl.message(
+      'Service name',
+      name: 'serviceName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enable`
+  String get enable {
+    return Intl.message('Enable', name: 'enable', desc: '', args: []);
+  }
+
+  /// `Disable`
+  String get disable {
+    return Intl.message('Disable', name: 'disable', desc: '', args: []);
+  }
+
+  /// `Delete permanently`
+  String get deletePermanently {
+    return Intl.message(
+      'Delete permanently',
+      name: 'deletePermanently',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Service images`
+  String get serviceImages {
+    return Intl.message(
+      'Service images',
+      name: 'serviceImages',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `My Services`
+  String get myServices {
+    return Intl.message('My Services', name: 'myServices', desc: '', args: []);
+  }
+
+  /// `Travel Bag`
+  String get bagTitle {
+    return Intl.message('Travel Bag', name: 'bagTitle', desc: '', args: []);
+  }
+
+  /// `Main checked luggage`
+  String get bagSubtitle {
+    return Intl.message(
+      'Main checked luggage',
+      name: 'bagSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total weight`
+  String get bagTotalWeightLabel {
+    return Intl.message(
+      'Total weight',
+      name: 'bagTotalWeightLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{current} / {max} kg`
+  String bagWeight(String current, String max) {
+    return Intl.message(
+      '$current / $max kg',
+      name: 'bagWeight',
+      desc: '',
+      args: [current, max],
+    );
+  }
+
+  /// `Add item`
+  String get bagAddItemButton {
+    return Intl.message(
+      'Add item',
+      name: 'bagAddItemButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `AI suggestions`
+  String get bagAISuggestionsButton {
+    return Intl.message(
+      'AI suggestions',
+      name: 'bagAISuggestionsButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reminders`
+  String get bagRemindersTitle {
+    return Intl.message(
+      'Reminders',
+      name: 'bagRemindersTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} active`
+  String bagRemindersActiveCount(int count) {
+    return Intl.message(
+      '$count active',
+      name: 'bagRemindersActiveCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Add reminder`
+  String get bagAddReminderButton {
+    return Intl.message(
+      'Add reminder',
+      name: 'bagAddReminderButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No reminders yet`
+  String get bagRemindersEmptyTitle {
+    return Intl.message(
+      'No reminders yet',
+      name: 'bagRemindersEmptyTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap "Add reminder" to create your first travel reminder.`
+  String get bagRemindersEmptyDescription {
+    return Intl.message(
+      'Tap "Add reminder" to create your first travel reminder.',
+      name: 'bagRemindersEmptyDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your bag is empty`
+  String get bagEmptyTitle {
+    return Intl.message(
+      'Your bag is empty',
+      name: 'bagEmptyTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Start adding your essentials to get travel-ready.`
+  String get bagEmptyDescription {
+    return Intl.message(
+      'Start adding your essentials to get travel-ready.',
+      name: 'bagEmptyDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Packing tips`
+  String get bagTipsTitle {
+    return Intl.message(
+      'Packing tips',
+      name: 'bagTipsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Place heavier items at the bottom of your bag.`
+  String get bagTip1 {
+    return Intl.message(
+      'Place heavier items at the bottom of your bag.',
+      name: 'bagTip1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Roll clothes instead of folding to save space.`
+  String get bagTip2 {
+    return Intl.message(
+      'Roll clothes instead of folding to save space.',
+      name: 'bagTip2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Keep valuable items in your carry-on.`
+  String get bagTip3 {
+    return Intl.message(
+      'Keep valuable items in your carry-on.',
+      name: 'bagTip3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Double-check your airline's weight allowance.`
+  String get bagTip4 {
+    return Intl.message(
+      'Double-check your airline\'s weight allowance.',
+      name: 'bagTip4',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete reminder?`
+  String get bagDeleteReminderTitle {
+    return Intl.message(
+      'Delete reminder?',
+      name: 'bagDeleteReminderTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to delete this reminder?`
+  String get bagDeleteReminderMessage {
+    return Intl.message(
+      'Are you sure you want to delete this reminder?',
+      name: 'bagDeleteReminderMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get bagDeleteCancel {
+    return Intl.message('Cancel', name: 'bagDeleteCancel', desc: '', args: []);
+  }
+
+  /// `Delete`
+  String get bagDeleteConfirm {
+    return Intl.message('Delete', name: 'bagDeleteConfirm', desc: '', args: []);
+  }
+
+  /// `Reminder deleted successfully.`
+  String get bagDeleteSuccess {
+    return Intl.message(
+      'Reminder deleted successfully.',
+      name: 'bagDeleteSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We couldn't refresh reminders. Please try again.`
+  String get reminderLoadError {
+    return Intl.message(
+      'We couldn\'t refresh reminders. Please try again.',
+      name: 'reminderLoadError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add reminder`
+  String get reminderAddTitle {
+    return Intl.message(
+      'Add reminder',
+      name: 'reminderAddTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit reminder`
+  String get reminderEditTitle {
+    return Intl.message(
+      'Edit reminder',
+      name: 'reminderEditTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Set reminder details so you never miss an important travel task.`
+  String get reminderSubtitle {
+    return Intl.message(
+      'Set reminder details so you never miss an important travel task.',
+      name: 'reminderSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reminder title`
+  String get reminderTitleLabel {
+    return Intl.message(
+      'Reminder title',
+      name: 'reminderTitleLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Example: Prepare passport`
+  String get reminderTitlePlaceholder {
+    return Intl.message(
+      'Example: Prepare passport',
+      name: 'reminderTitlePlaceholder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a reminder title.`
+  String get reminderTitleValidation {
+    return Intl.message(
+      'Please enter a reminder title.',
+      name: 'reminderTitleValidation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Date`
+  String get reminderDateLabel {
+    return Intl.message('Date', name: 'reminderDateLabel', desc: '', args: []);
+  }
+
+  /// `Select date`
+  String get reminderDatePlaceholder {
+    return Intl.message(
+      'Select date',
+      name: 'reminderDatePlaceholder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please choose a date.`
+  String get reminderDateValidation {
+    return Intl.message(
+      'Please choose a date.',
+      name: 'reminderDateValidation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time`
+  String get reminderTimeLabel {
+    return Intl.message('Time', name: 'reminderTimeLabel', desc: '', args: []);
+  }
+
+  /// `Select time`
+  String get reminderTimePlaceholder {
+    return Intl.message(
+      'Select time',
+      name: 'reminderTimePlaceholder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please choose a time.`
+  String get reminderTimeValidation {
+    return Intl.message(
+      'Please choose a time.',
+      name: 'reminderTimeValidation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Recurrence`
+  String get reminderRecurrenceLabel {
+    return Intl.message(
+      'Recurrence',
+      name: 'reminderRecurrenceLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `One time`
+  String get reminderRecurrenceOnce {
+    return Intl.message(
+      'One time',
+      name: 'reminderRecurrenceOnce',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Daily`
+  String get reminderRecurrenceDaily {
+    return Intl.message(
+      'Daily',
+      name: 'reminderRecurrenceDaily',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weekly`
+  String get reminderRecurrenceWeekly {
+    return Intl.message(
+      'Weekly',
+      name: 'reminderRecurrenceWeekly',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Custom`
+  String get reminderRecurrenceCustom {
+    return Intl.message(
+      'Custom',
+      name: 'reminderRecurrenceCustom',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notes (optional)`
+  String get reminderNotesLabel {
+    return Intl.message(
+      'Notes (optional)',
+      name: 'reminderNotesLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add any extra notes that help you remember.`
+  String get reminderNotesPlaceholder {
+    return Intl.message(
+      'Add any extra notes that help you remember.',
+      name: 'reminderNotesPlaceholder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Attachment (optional)`
+  String get reminderAttachmentLabel {
+    return Intl.message(
+      'Attachment (optional)',
+      name: 'reminderAttachmentLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Attach image`
+  String get reminderAttachmentAdd {
+    return Intl.message(
+      'Attach image',
+      name: 'reminderAttachmentAdd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save reminder`
+  String get reminderAddButton {
+    return Intl.message(
+      'Save reminder',
+      name: 'reminderAddButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update reminder`
+  String get reminderUpdateButton {
+    return Intl.message(
+      'Update reminder',
+      name: 'reminderUpdateButton',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reminder created successfully.`
+  String get reminderCreateSuccess {
+    return Intl.message(
+      'Reminder created successfully.',
+      name: 'reminderCreateSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reminder updated successfully.`
+  String get reminderUpdateSuccess {
+    return Intl.message(
+      'Reminder updated successfully.',
+      name: 'reminderUpdateSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Something went wrong while saving the reminder.`
+  String get reminderSaveError {
+    return Intl.message(
+      'Something went wrong while saving the reminder.',
+      name: 'reminderSaveError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose from gallery`
+  String get imagePickerGallery {
+    return Intl.message(
+      'Choose from gallery',
+      name: 'imagePickerGallery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Use camera`
+  String get imagePickerCamera {
+    return Intl.message(
+      'Use camera',
+      name: 'imagePickerCamera',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {
