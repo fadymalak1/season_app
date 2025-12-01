@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:season_app/core/services/firebase_service.dart';
 import 'package:season_app/core/services/local_storage_service.dart';
 import 'package:season_app/core/services/notification_service.dart';
+import 'package:season_app/core/services/background_location_service.dart';
 import 'package:season_app/shared/providers/locale_provider.dart';
 import 'package:season_app/shared/providers/theme_provider.dart';
-import 'package:svg_image/svg_image.dart';
 import 'core/localization/generated/l10n.dart';
 import 'core/router/app_router.dart';
 import 'core/themes/app_theme.dart';
@@ -18,9 +18,6 @@ void main() async{
   // Initialize local storage service
   await LocalStorageService.init();
   
-  // Initialize SVG config
-  await SvgImageConfig.init();
-
   // Initialize Firebase and Notifications
   try {
     await FirebaseService.initialize();
@@ -29,6 +26,13 @@ void main() async{
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   } catch (e) {
     debugPrint('❌ Error initializing Firebase: $e');
+  }
+
+  // Initialize background location service
+  try {
+    await initializeBackgroundLocationService();
+  } catch (e) {
+    debugPrint('Error initializing background location service: $e');
   }
 
   runApp(ProviderScope(child: const MyApp()));
@@ -55,7 +59,7 @@ class MyApp extends ConsumerWidget {
             themeMode: themeMode,
             supportedLocales: AppLocalizations.delegate.supportedLocales,
             localizationsDelegates: const [
-              AppLocalizations.delegate, // من الـ Flutter Intl
+              AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
@@ -63,28 +67,6 @@ class MyApp extends ConsumerWidget {
             routerConfig: router,
           );
         }
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context);
-    return Scaffold(
-      appBar: AppBar(title: Text(loc.appTitle)),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(loc.welcome),
-            const SizedBox(height: 16),
-            Text(loc.helloUser('Fady')),
-          ],
-        ),
-      ),
     );
   }
 }

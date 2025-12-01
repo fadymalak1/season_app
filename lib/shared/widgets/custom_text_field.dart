@@ -16,6 +16,7 @@ class CustomTextField extends ConsumerWidget {
   final void Function(CountryCode)? onCountryChanged;
   final CountryCode? initialCountry;
   final TextDirection? textDirection;
+  final int maxLines;
 
   const CustomTextField({
     super.key,
@@ -31,6 +32,7 @@ class CustomTextField extends ConsumerWidget {
     this.onCountryChanged,
     this.textDirection,
     this.initialCountry,
+    this.maxLines = 1,
   });
 
   @override
@@ -41,6 +43,7 @@ class CustomTextField extends ConsumerWidget {
       keyboardType: keyboardType,
       textDirection: textDirection ?? (isArabic ? TextDirection.rtl : TextDirection.ltr),
       obscureText: obscureText,
+      maxLines: maxLines,
       obscuringCharacter: '●',
       validator: validator,
       onChanged: onChanged,
@@ -57,9 +60,17 @@ class CustomTextField extends ConsumerWidget {
         )
             : prefixIcon,
         suffixIcon: suffixIcon,
-        contentPadding:
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        filled: true,
+        fillColor: const Color(0xFFF7F9FC),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Color(0xFFE6ECF5)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Color(0xFF6C8EF5), width: 1.5),
+        ),
       ),
     );
   }

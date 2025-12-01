@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:season_app/core/constants/app_assets.dart';
 import 'package:season_app/core/constants/app_colors.dart';
-import 'package:svg_image/svg_image.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SocialIcons extends StatelessWidget {
   const SocialIcons({super.key});
@@ -29,12 +29,7 @@ class SocialIcons extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: SvgImage(
-                AppAssets.googleIcon,
-                type: PathType.assets,
-                width: 40,
-                height: 40,
-              ),
+              child: SvgPicture.asset(AppAssets.googleIcon, width: 40, height: 40),
             ),
           ),
         ),
@@ -56,12 +51,7 @@ class SocialIcons extends StatelessWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
-                child: SvgImage(
-                  AppAssets.appleIcon,
-                  type: PathType.assets,
-                  width: 40,
-                  height: 40,
-                ),
+                child: SvgPicture.asset(AppAssets.appleIcon, width: 40, height: 40),
               ),
             ),
           ),

@@ -77,9 +77,10 @@ class AuthRepository {
           // Try: access_token
           token ??= response.data['access_token'];
           
-          // Get user ID
+          // Get user ID - check multiple possible locations
           userId = response.data['data']?['user']?['id']?.toString();
           userId ??= response.data['user']?['id']?.toString();
+          userId ??= response.data['userInfo']?['id']?.toString(); // Season API uses 'userInfo'
         }
         
         print('🔑 Extracted Token: ${token?.toString().substring(0, token.toString().length > 30 ? 30 : token.toString().length)}...');
@@ -148,9 +149,10 @@ class AuthRepository {
           // Try: access_token
           token ??= response.data['access_token'];
           
-          // Get user ID
+          // Get user ID - check multiple possible locations
           userId = response.data['data']?['user']?['id']?.toString();
           userId ??= response.data['user']?['id']?.toString();
+          userId ??= response.data['userInfo']?['id']?.toString(); // Season API uses 'userInfo'
         }
         
         print('🔑 Extracted Token: ${token?.toString().substring(0, token.toString().length > 30 ? 30 : token.toString().length)}...');

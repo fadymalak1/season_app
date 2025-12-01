@@ -20,11 +20,13 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'ar';
 
-  static String m0(count) => "${count} مفعلة";
+  static String m0(weight) => "الوزن التقريبي: ${weight} كجم";
 
-  static String m1(current, max) => "${current} / ${max} كجم";
+  static String m1(count) => "${count} مفعلة";
 
-  static String m2(userName) => "أهلاً يا ${userName}!";
+  static String m2(current, max) => "${current} / ${max} كجم";
+
+  static String m3(userName) => "أهلاً يا ${userName}!";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -68,9 +70,31 @@ class MessageLookup extends MessageLookupByLibrary {
       "اقتراحات الذكاء الاصطناعي",
     ),
     "bagAddItemButton": MessageLookupByLibrary.simpleMessage("إضافة عنصر"),
+    "bagAddItemError": MessageLookupByLibrary.simpleMessage(
+      "فشل إضافة العنصر. يرجى المحاولة مرة أخرى.",
+    ),
+    "bagAddItemSubmit": MessageLookupByLibrary.simpleMessage(
+      "إضافة إلى الحقيبة",
+    ),
+    "bagAddItemSuccess": MessageLookupByLibrary.simpleMessage(
+      "تم إضافة العنصر بنجاح.",
+    ),
+    "bagAddItemTitle": MessageLookupByLibrary.simpleMessage("إضافة عنصر"),
     "bagAddReminderButton": MessageLookupByLibrary.simpleMessage("إضافة تذكير"),
+    "bagApproxWeight": m0,
+    "bagCategoriesTitle": MessageLookupByLibrary.simpleMessage("التصنيفات"),
     "bagDeleteCancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
     "bagDeleteConfirm": MessageLookupByLibrary.simpleMessage("حذف"),
+    "bagDeleteItemError": MessageLookupByLibrary.simpleMessage(
+      "فشل إزالة العنصر. يرجى المحاولة مرة أخرى.",
+    ),
+    "bagDeleteItemMessage": MessageLookupByLibrary.simpleMessage(
+      "هل أنت متأكد من إزالة هذا العنصر من حقيبتك؟",
+    ),
+    "bagDeleteItemSuccess": MessageLookupByLibrary.simpleMessage(
+      "تم إزالة العنصر بنجاح.",
+    ),
+    "bagDeleteItemTitle": MessageLookupByLibrary.simpleMessage("إزالة العنصر؟"),
     "bagDeleteReminderMessage": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من حذف هذا التذكير؟",
     ),
@@ -84,10 +108,27 @@ class MessageLookup extends MessageLookupByLibrary {
       "ابدأ بإضافة أغراضك للاستعداد للسفر.",
     ),
     "bagEmptyTitle": MessageLookupByLibrary.simpleMessage("الحقيبة فارغة"),
+    "bagItemsEmpty": MessageLookupByLibrary.simpleMessage(
+      "لا توجد عناصر متاحة لهذا التصنيف حالياً.",
+    ),
+    "bagItemsError": MessageLookupByLibrary.simpleMessage(
+      "تعذر تحميل عناصر هذا التصنيف.",
+    ),
+    "bagItemsTitle": MessageLookupByLibrary.simpleMessage("عناصر مقترحة"),
+    "bagLoadingItems": MessageLookupByLibrary.simpleMessage(
+      "جاري تحميل العناصر...",
+    ),
+    "bagNoCategories": MessageLookupByLibrary.simpleMessage(
+      "لا توجد تصنيفات متاحة حالياً.",
+    ),
+    "bagNoItems": MessageLookupByLibrary.simpleMessage(
+      "لا توجد عناصر متاحة لهذا التصنيف.",
+    ),
     "bagPageContent": MessageLookupByLibrary.simpleMessage(
       "عناصر حقيبة التسوق الخاصة بك",
     ),
-    "bagRemindersActiveCount": m0,
+    "bagQuantityLabel": MessageLookupByLibrary.simpleMessage("الكمية"),
+    "bagRemindersActiveCount": m1,
     "bagRemindersEmptyDescription": MessageLookupByLibrary.simpleMessage(
       "اضغط على \"إضافة تذكير\" لإنشاء أول تذكير لرحلتك.",
     ),
@@ -95,6 +136,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "لا توجد تذكيرات بعد",
     ),
     "bagRemindersTitle": MessageLookupByLibrary.simpleMessage("التذكيرات"),
+    "bagSelectCategory": MessageLookupByLibrary.simpleMessage("التصنيف"),
+    "bagSelectCategoryPlaceholder": MessageLookupByLibrary.simpleMessage(
+      "اختر التصنيف",
+    ),
+    "bagSelectItem": MessageLookupByLibrary.simpleMessage("العنصر"),
+    "bagSelectItemPlaceholder": MessageLookupByLibrary.simpleMessage(
+      "اختر العنصر",
+    ),
     "bagSubtitle": MessageLookupByLibrary.simpleMessage("شنطة الشحن الرئيسية"),
     "bagTip1": MessageLookupByLibrary.simpleMessage(
       "ضع الأشياء الثقيلة في أسفل الحقيبة.",
@@ -113,7 +162,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "bagTotalWeightLabel": MessageLookupByLibrary.simpleMessage(
       "الوزن الإجمالي",
     ),
-    "bagWeight": m1,
+    "bagTypesTitle": MessageLookupByLibrary.simpleMessage("أنواع الحقائب"),
+    "bagUpdateQuantityError": MessageLookupByLibrary.simpleMessage(
+      "فشل تحديث الكمية. يرجى المحاولة مرة أخرى.",
+    ),
+    "bagUpdateQuantitySuccess": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث الكمية بنجاح.",
+    ),
+    "bagWeight": m2,
     "birthDate": MessageLookupByLibrary.simpleMessage("تاريخ الميلاد"),
     "camera": MessageLookupByLibrary.simpleMessage("الكاميرا"),
     "cancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
@@ -261,7 +317,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "عرض وإدارة مجموعاتك",
     ),
     "groups": MessageLookupByLibrary.simpleMessage("مجموعة"),
-    "helloUser": m2,
+    "helloUser": m3,
     "home": MessageLookupByLibrary.simpleMessage("الرئيسية"),
     "homePageContent": MessageLookupByLibrary.simpleMessage(
       "مرحباً بك في الصفحة الرئيسية",

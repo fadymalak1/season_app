@@ -9,6 +9,7 @@ class AppAssets {
   static const String onBoardingBag = 'assets/images/gif/onboarding_bag.gif';
   static const String onBoardingTranslate = 'assets/images/png/onboarding_translate.png';
   static const String seasonIcon = 'assets/images/png/season_icon.png';
+  static const String appLogo = 'assets/images/png/app_logo.png';
   static const String seasonWelcomeImage = 'assets/images/png/season_welcome.png';
   static const String seasonAuthImage = 'assets/images/png/season_auth.png';
   static const String forgetPasswordIcon = 'assets/images/png/forget_password_icon.png';

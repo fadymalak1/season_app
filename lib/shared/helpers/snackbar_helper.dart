@@ -19,8 +19,7 @@ class SnackbarHelper {
           backgroundColor: backgroundColor ?? Colors.black87,
           duration: duration,
           action: action,
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.all(12),
+          behavior: SnackBarBehavior.fixed,
         ),
       );
   }

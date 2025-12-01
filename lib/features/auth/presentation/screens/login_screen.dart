@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +11,7 @@ import 'package:season_app/core/utils/validators.dart';
 import 'package:season_app/features/auth/presentation/widgets/or_divider.dart';
 import 'package:season_app/features/auth/presentation/widgets/social_icons.dart';
 import 'package:season_app/features/auth/providers.dart';
+import 'package:season_app/features/groups/providers.dart';
 import 'package:season_app/shared/helpers/snackbar_helper.dart';
 import 'package:season_app/shared/providers/locale_provider.dart';
 import 'package:season_app/shared/widgets/custom_button.dart';
@@ -52,6 +52,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         SnackbarHelper.error(context, next.error.toString());
       } else if (next.message != null && next.isLoggedIn) {
         SnackbarHelper.success(context, next.message.toString());
+        
+        // Clear any existing groups data for the new user
+        ref.read(groupsControllerProvider.notifier).clearAllData();
         
         // Subscribe to notification topics after successful login
         try {

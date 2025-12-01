@@ -50,108 +50,122 @@ class ReminderListItem extends StatelessWidget {
       return loc.reminderRecurrenceDaily;
     } else if (recurrence.contains('week') || recurrence.contains('أسبوع')) {
       return loc.reminderRecurrenceWeekly;
-    } else if (recurrence.contains('custom') || recurrence.contains('مخصص')) {
-      return loc.reminderRecurrenceCustom;
+    } else if (recurrence.contains('month') || recurrence.contains('شهر')) {
+      return _monthlyLabel(context);
     }
     return reminder.recurrence;
   }
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context);
     final isActive = reminder.status == 'active';
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isActive
-              ? AppColors.primary.withOpacity(0.12)
-              : AppColors.border,
-          width: isActive ? 1.5 : 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+
+    final hasAttachment = reminder.attachment != null && reminder.attachment!.isNotEmpty;
+
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          decoration: BoxDecoration(
+         
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppColors.primary.withOpacity(0.08)),
+          
           ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
           child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Status Indicator
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isActive
-                        ? AppColors.success
-                        : AppColors.textSecondary.withOpacity(0.5),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                
-                // Content
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        reminder.title,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      if (reminder.notes != null && reminder.notes!.isNotEmpty) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          reminder.notes!,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textSecondary,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _leadingVisual(hasAttachment: hasAttachment, isActive: isActive),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            reminder.title,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                          if (reminder.notes != null &&
+                              reminder.notes!.isNotEmpty) ...[
+                            const SizedBox(height: 6),
+                            Text(
+                              reminder.notes!,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                                height: 1.3,
+                              ),
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        _statusBadge(context, isActive),
+                        const SizedBox(height: 8),
+                        InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: onDelete,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: AppColors.error.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.delete_outline,
+                              size: 16,
+                              color: AppColors.error,
+                            ),
+                          ),
                         ),
                       ],
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 16,
-                        runSpacing: 6,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          _metaItem(
-                            icon: Icons.calendar_today,
-                            text: _formatDate(context),
-                          ),
-                          _metaItem(
-                            icon: Icons.access_time,
-                            text: _formatTime(context),
-                          ),
-                          _metaChip(_recurrenceLabel(context)),
-                        ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.07),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _bottomMeta(
+                        icon: Icons.calendar_today,
+                        text: _formatDate(context),
+                      ),
+                      _bottomMeta(
+                        icon: Icons.access_time,
+                        text: _formatTime(context),
+                      ),
+                      _bottomMeta(
+                        icon: Icons.repeat,
+                        text: _recurrenceLabel(context),
                       ),
                     ],
                   ),
-                ),
-                
-                // Actions
-                IconButton(
-                  icon: const Icon(Icons.delete_outline, color: AppColors.error),
-                  onPressed: onDelete,
-                  tooltip: loc.bagDeleteConfirm,
                 ),
               ],
             ),
@@ -161,39 +175,99 @@ class ReminderListItem extends StatelessWidget {
     );
   }
 
-  Widget _metaItem({required IconData icon, required String text}) {
+  Widget _statusBadge(BuildContext context, bool isActive) {
+    final localeCode = Localizations.localeOf(context).languageCode;
+    final label = isActive
+        ? (localeCode == 'ar' ? 'نشط' : 'Active')
+        : (localeCode == 'ar' ? 'متوقف' : 'Paused');
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: isActive
+            ? AppColors.success.withOpacity(0.12)
+            : AppColors.textSecondary.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isActive ? Icons.check_circle : Icons.pause_circle_filled,
+            size: 14,
+            color: isActive ? AppColors.success : AppColors.textSecondary,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: isActive ? AppColors.success : AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _bottomMeta({required IconData icon, required String text}) {
     return Row(
-      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: AppColors.textSecondary),
-        const SizedBox(width: 4),
+        Icon(icon, size: 14, color: AppColors.primary),
+        const SizedBox(width: 6),
         Text(
           text,
           style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.textSecondary,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: AppColors.primary,
           ),
         ),
       ],
     );
   }
 
-  Widget _metaChip(String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 12,
-          color: AppColors.primary,
-          fontWeight: FontWeight.w600,
+  Widget _leadingVisual({required bool hasAttachment, required bool isActive}) {
+    if (hasAttachment) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(14),
+        child: SizedBox(
+          width: 52,
+          height: 52,
+          child: Image.network(
+            reminder.attachment!,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return _leadingPlaceholder(isActive);
+            },
+          ),
         ),
+      );
+    }
+    return _leadingPlaceholder(isActive);
+  }
+
+  Widget _leadingPlaceholder(bool isActive) {
+    return Container(
+      width: 52,
+      height: 52,
+      decoration: BoxDecoration(
+        color: AppColors.primary.withOpacity(isActive ? 0.20 : 0.12),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      alignment: Alignment.center,
+      child: const Icon(
+        Icons.event_note,
+        color: AppColors.primary,
+        size: 22,
       ),
     );
+  }
+
+  String _monthlyLabel(BuildContext context) {
+    final localeCode = Localizations.localeOf(context).languageCode;
+    return localeCode == 'ar' ? 'شهري' : 'Monthly';
   }
 }
 

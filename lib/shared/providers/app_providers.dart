@@ -5,17 +5,16 @@ import 'package:season_app/core/services/dio_client.dart';
 import 'package:season_app/core/services/auth_service.dart';
 import 'package:season_app/shared/providers/locale_provider.dart';
 
-// DioHelper provider (singleton)
+// DioHelper provider (singleton) - initialized once
 final dioHelperProvider = Provider<DioHelper>((ref) {
   final helper = DioHelper.instance;
-  final locale = ref.watch(localeProvider);
-
-  // Initialize DioHelper
+  
+  // Initialize DioHelper only once
   helper.initialize(
     baseUrl: ApiEndpoints.baseUrl,
     enableLogging: true,
     headers: {
-      'Accept-Language': locale.languageCode,
+      'Accept-Language': 'en', // Default language, will be updated by dioProvider
     },
   );
 
@@ -28,7 +27,7 @@ final dioHelperProvider = Provider<DioHelper>((ref) {
   return helper;
 });
 
-// Provide Dio instance ready to use
+// Provide Dio instance ready to use with reactive language updates
 final dioProvider = Provider<Dio>((ref) {
   final helper = ref.watch(dioHelperProvider);
   final locale = ref.watch(localeProvider);

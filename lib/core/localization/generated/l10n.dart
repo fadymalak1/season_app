@@ -1944,6 +1944,236 @@ class AppLocalizations {
     );
   }
 
+  /// `Remove item?`
+  String get bagDeleteItemTitle {
+    return Intl.message(
+      'Remove item?',
+      name: 'bagDeleteItemTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Are you sure you want to remove this item from your bag?`
+  String get bagDeleteItemMessage {
+    return Intl.message(
+      'Are you sure you want to remove this item from your bag?',
+      name: 'bagDeleteItemMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item removed successfully.`
+  String get bagDeleteItemSuccess {
+    return Intl.message(
+      'Item removed successfully.',
+      name: 'bagDeleteItemSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to remove item. Please try again.`
+  String get bagDeleteItemError {
+    return Intl.message(
+      'Failed to remove item. Please try again.',
+      name: 'bagDeleteItemError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item added successfully.`
+  String get bagAddItemSuccess {
+    return Intl.message(
+      'Item added successfully.',
+      name: 'bagAddItemSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to add item. Please try again.`
+  String get bagAddItemError {
+    return Intl.message(
+      'Failed to add item. Please try again.',
+      name: 'bagAddItemError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quantity updated successfully.`
+  String get bagUpdateQuantitySuccess {
+    return Intl.message(
+      'Quantity updated successfully.',
+      name: 'bagUpdateQuantitySuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to update quantity. Please try again.`
+  String get bagUpdateQuantityError {
+    return Intl.message(
+      'Failed to update quantity. Please try again.',
+      name: 'bagUpdateQuantityError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Bag types`
+  String get bagTypesTitle {
+    return Intl.message('Bag types', name: 'bagTypesTitle', desc: '', args: []);
+  }
+
+  /// `Categories`
+  String get bagCategoriesTitle {
+    return Intl.message(
+      'Categories',
+      name: 'bagCategoriesTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Suggested items`
+  String get bagItemsTitle {
+    return Intl.message(
+      'Suggested items',
+      name: 'bagItemsTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No items to show in this category yet.`
+  String get bagItemsEmpty {
+    return Intl.message(
+      'No items to show in this category yet.',
+      name: 'bagItemsEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `We couldn't load items for this category.`
+  String get bagItemsError {
+    return Intl.message(
+      'We couldn\'t load items for this category.',
+      name: 'bagItemsError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add item`
+  String get bagAddItemTitle {
+    return Intl.message(
+      'Add item',
+      name: 'bagAddItemTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Category`
+  String get bagSelectCategory {
+    return Intl.message(
+      'Category',
+      name: 'bagSelectCategory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select category`
+  String get bagSelectCategoryPlaceholder {
+    return Intl.message(
+      'Select category',
+      name: 'bagSelectCategoryPlaceholder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Item`
+  String get bagSelectItem {
+    return Intl.message('Item', name: 'bagSelectItem', desc: '', args: []);
+  }
+
+  /// `Select item`
+  String get bagSelectItemPlaceholder {
+    return Intl.message(
+      'Select item',
+      name: 'bagSelectItemPlaceholder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quantity`
+  String get bagQuantityLabel {
+    return Intl.message(
+      'Quantity',
+      name: 'bagQuantityLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approximate weight: {weight} kg`
+  String bagApproxWeight(String weight) {
+    return Intl.message(
+      'Approximate weight: $weight kg',
+      name: 'bagApproxWeight',
+      desc: '',
+      args: [weight],
+    );
+  }
+
+  /// `Add to bag`
+  String get bagAddItemSubmit {
+    return Intl.message(
+      'Add to bag',
+      name: 'bagAddItemSubmit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No categories available yet.`
+  String get bagNoCategories {
+    return Intl.message(
+      'No categories available yet.',
+      name: 'bagNoCategories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No items available for this category.`
+  String get bagNoItems {
+    return Intl.message(
+      'No items available for this category.',
+      name: 'bagNoItems',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Loading items...`
+  String get bagLoadingItems {
+    return Intl.message(
+      'Loading items...',
+      name: 'bagLoadingItems',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `We couldn't refresh reminders. Please try again.`
   String get reminderLoadError {
     return Intl.message(

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:season_app/core/constants/app_assets.dart';
+import 'package:season_app/core/constants/app_colors.dart';
 import 'package:season_app/core/router/routes.dart';
 import 'package:season_app/core/services/auth_service.dart';
 import 'package:season_app/core/services/dio_client.dart';
@@ -46,14 +47,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.primary,
       body: Center(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width / 1.8,
-          child: Image.asset(
-            AppAssets.splashScreenBackground,
-            fit: BoxFit.fitWidth,
-          ),
+        child: Image.asset(
+          AppAssets.appLogo,
+          width: MediaQuery.of(context).size.width / 3,
+          fit: BoxFit.contain,
         ),
       ),
     );

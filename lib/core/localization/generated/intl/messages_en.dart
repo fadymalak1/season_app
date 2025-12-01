@@ -20,11 +20,13 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(count) => "${count} active";
+  static String m0(weight) => "Approximate weight: ${weight} kg";
 
-  static String m1(current, max) => "${current} / ${max} kg";
+  static String m1(count) => "${count} active";
 
-  static String m2(userName) => "Hello ${userName}!";
+  static String m2(current, max) => "${current} / ${max} kg";
+
+  static String m3(userName) => "Hello ${userName}!";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -66,11 +68,31 @@ class MessageLookup extends MessageLookupByLibrary {
       "AI suggestions",
     ),
     "bagAddItemButton": MessageLookupByLibrary.simpleMessage("Add item"),
+    "bagAddItemError": MessageLookupByLibrary.simpleMessage(
+      "Failed to add item. Please try again.",
+    ),
+    "bagAddItemSubmit": MessageLookupByLibrary.simpleMessage("Add to bag"),
+    "bagAddItemSuccess": MessageLookupByLibrary.simpleMessage(
+      "Item added successfully.",
+    ),
+    "bagAddItemTitle": MessageLookupByLibrary.simpleMessage("Add item"),
     "bagAddReminderButton": MessageLookupByLibrary.simpleMessage(
       "Add reminder",
     ),
+    "bagApproxWeight": m0,
+    "bagCategoriesTitle": MessageLookupByLibrary.simpleMessage("Categories"),
     "bagDeleteCancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "bagDeleteConfirm": MessageLookupByLibrary.simpleMessage("Delete"),
+    "bagDeleteItemError": MessageLookupByLibrary.simpleMessage(
+      "Failed to remove item. Please try again.",
+    ),
+    "bagDeleteItemMessage": MessageLookupByLibrary.simpleMessage(
+      "Are you sure you want to remove this item from your bag?",
+    ),
+    "bagDeleteItemSuccess": MessageLookupByLibrary.simpleMessage(
+      "Item removed successfully.",
+    ),
+    "bagDeleteItemTitle": MessageLookupByLibrary.simpleMessage("Remove item?"),
     "bagDeleteReminderMessage": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to delete this reminder?",
     ),
@@ -84,10 +106,25 @@ class MessageLookup extends MessageLookupByLibrary {
       "Start adding your essentials to get travel-ready.",
     ),
     "bagEmptyTitle": MessageLookupByLibrary.simpleMessage("Your bag is empty"),
+    "bagItemsEmpty": MessageLookupByLibrary.simpleMessage(
+      "No items to show in this category yet.",
+    ),
+    "bagItemsError": MessageLookupByLibrary.simpleMessage(
+      "We couldn\'t load items for this category.",
+    ),
+    "bagItemsTitle": MessageLookupByLibrary.simpleMessage("Suggested items"),
+    "bagLoadingItems": MessageLookupByLibrary.simpleMessage("Loading items..."),
+    "bagNoCategories": MessageLookupByLibrary.simpleMessage(
+      "No categories available yet.",
+    ),
+    "bagNoItems": MessageLookupByLibrary.simpleMessage(
+      "No items available for this category.",
+    ),
     "bagPageContent": MessageLookupByLibrary.simpleMessage(
       "Your shopping bag items",
     ),
-    "bagRemindersActiveCount": m0,
+    "bagQuantityLabel": MessageLookupByLibrary.simpleMessage("Quantity"),
+    "bagRemindersActiveCount": m1,
     "bagRemindersEmptyDescription": MessageLookupByLibrary.simpleMessage(
       "Tap \"Add reminder\" to create your first travel reminder.",
     ),
@@ -95,6 +132,14 @@ class MessageLookup extends MessageLookupByLibrary {
       "No reminders yet",
     ),
     "bagRemindersTitle": MessageLookupByLibrary.simpleMessage("Reminders"),
+    "bagSelectCategory": MessageLookupByLibrary.simpleMessage("Category"),
+    "bagSelectCategoryPlaceholder": MessageLookupByLibrary.simpleMessage(
+      "Select category",
+    ),
+    "bagSelectItem": MessageLookupByLibrary.simpleMessage("Item"),
+    "bagSelectItemPlaceholder": MessageLookupByLibrary.simpleMessage(
+      "Select item",
+    ),
     "bagSubtitle": MessageLookupByLibrary.simpleMessage("Main checked luggage"),
     "bagTip1": MessageLookupByLibrary.simpleMessage(
       "Place heavier items at the bottom of your bag.",
@@ -111,7 +156,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "bagTipsTitle": MessageLookupByLibrary.simpleMessage("Packing tips"),
     "bagTitle": MessageLookupByLibrary.simpleMessage("Travel Bag"),
     "bagTotalWeightLabel": MessageLookupByLibrary.simpleMessage("Total weight"),
-    "bagWeight": m1,
+    "bagTypesTitle": MessageLookupByLibrary.simpleMessage("Bag types"),
+    "bagUpdateQuantityError": MessageLookupByLibrary.simpleMessage(
+      "Failed to update quantity. Please try again.",
+    ),
+    "bagUpdateQuantitySuccess": MessageLookupByLibrary.simpleMessage(
+      "Quantity updated successfully.",
+    ),
+    "bagWeight": m2,
     "birthDate": MessageLookupByLibrary.simpleMessage("Birth Date"),
     "camera": MessageLookupByLibrary.simpleMessage("Camera"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
@@ -259,7 +311,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "View and manage your groups",
     ),
     "groups": MessageLookupByLibrary.simpleMessage("Groups"),
-    "helloUser": m2,
+    "helloUser": m3,
     "home": MessageLookupByLibrary.simpleMessage("Home"),
     "homePageContent": MessageLookupByLibrary.simpleMessage(
       "Welcome to your home page",

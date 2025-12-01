@@ -4,9 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:season_app/core/constants/app_colors.dart';
 import 'package:season_app/core/localization/generated/l10n.dart';
 import 'package:season_app/core/router/routes.dart';
-import 'package:season_app/features/auth/providers.dart';
+import 'package:season_app/core/services/app_state_service.dart';
 import 'package:season_app/shared/providers/locale_provider.dart';
-import 'package:season_app/shared/providers/theme_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -14,9 +13,7 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loc = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final currentLocale = ref.watch(localeProvider);
-    final themeMode = ref.watch(themeProvider);
 
     return Scaffold(
       body: CustomScrollView(
@@ -88,10 +85,10 @@ class SettingsScreen extends ConsumerWidget {
                   _buildSettingCard(
                     icon: Icons.privacy_tip_outlined,
                     title: loc.privacyPolicy,
-                    subtitle: 'Read our privacy policy',
+                    subtitle: loc.readPrivacyPolicy,
                     trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
                     onTap: () {
-                      // TODO: Navigate to privacy policy
+                      context.push('${Routes.webview}?url=${Uri.encodeComponent('https://seasonksa.com/privacy')}&title=${Uri.encodeComponent(loc.privacyPolicy)}');
                     },
                   ),
                   
@@ -100,10 +97,10 @@ class SettingsScreen extends ConsumerWidget {
                   _buildSettingCard(
                     icon: Icons.description_outlined,
                     title: loc.termsAndConditions,
-                    subtitle: 'Terms of service',
+                    subtitle: loc.termsOfService,
                     trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
                     onTap: () {
-                      // TODO: Navigate to terms
+                      context.push('${Routes.webview}?url=${Uri.encodeComponent('https://seasonksa.com/terms')}&title=${Uri.encodeComponent(loc.termsAndConditions)}');
                     },
                   ),
                   
@@ -396,14 +393,14 @@ class SettingsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.error,
-            AppColors.error.withOpacity(0.8),
+            AppColors.primary,
+            AppColors.primary.withOpacity(0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: AppColors.error.withOpacity(0.3),
+            color: AppColors.primary.withOpacity(0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -421,7 +418,7 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 title: Row(
                   children: [
-                    const Icon(Icons.logout, color: AppColors.error),
+                    const Icon(Icons.logout, color: AppColors.primary),
                     const SizedBox(width: 8),
                     Text(loc.logout),
                   ],
@@ -435,7 +432,7 @@ class SettingsScreen extends ConsumerWidget {
                   ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(true),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.error,
+                      backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -450,7 +447,7 @@ class SettingsScreen extends ConsumerWidget {
             );
 
             if (shouldLogout == true && context.mounted) {
-              await ref.read(authRepositoryProvider).logout();
+              await AppStateService.clearAllAppState(ref);
               if (context.mounted) {
                 context.go(Routes.welcome);
               }
@@ -484,7 +481,7 @@ class SettingsScreen extends ConsumerWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.error, width: 1.5),
+        border: Border.all(color: AppColors.secondary, width: 1.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Material(
@@ -499,13 +496,13 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 title: Row(
                   children: [
-                    const Icon(Icons.warning_outlined, color: AppColors.error),
+                    const Icon(Icons.warning_outlined, color: AppColors.secondary),
                     const SizedBox(width: 8),
                     Text(loc.deleteAccount),
                   ],
                 ),
-                content: const Text(
-                  'This action cannot be undone. All your data will be permanently deleted.',
+                content: Text(
+                  loc.deleteAccountWarning,
                 ),
                 actions: [
                   TextButton(
@@ -519,12 +516,12 @@ class SettingsScreen extends ConsumerWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Delete account functionality coming soon'),
-                          backgroundColor: AppColors.error,
+                          backgroundColor: AppColors.secondary,
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.error,
+                      backgroundColor: AppColors.secondary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -544,12 +541,12 @@ class SettingsScreen extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.delete_forever, color: AppColors.error, size: 24),
+                const Icon(Icons.delete_forever, color: AppColors.secondary, size: 24),
                 const SizedBox(width: 12),
                 Text(
                   loc.deleteAccount,
                   style: const TextStyle(
-                    color: AppColors.error,
+                    color: AppColors.secondary,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),

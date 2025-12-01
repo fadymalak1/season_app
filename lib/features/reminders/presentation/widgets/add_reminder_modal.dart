@@ -27,6 +27,7 @@ class _AddReminderModalState extends ConsumerState<AddReminderModal> {
   TimeOfDay? _selectedTime;
   String _selectedRecurrence = 'once';
   File? _selectedImage;
+  String? _existingAttachmentUrl;
   bool _isLoading = false;
 
   @override
@@ -49,6 +50,7 @@ class _AddReminderModalState extends ConsumerState<AddReminderModal> {
     _titleController.text = reminder.title;
     _notesController.text = reminder.notes ?? '';
     _selectedRecurrence = _normalizeRecurrence(reminder.recurrence);
+    _existingAttachmentUrl = reminder.attachment;
 
     try {
       _selectedDate = DateTime.parse(reminder.date);
@@ -122,7 +124,10 @@ class _AddReminderModalState extends ConsumerState<AddReminderModal> {
   Future<void> _pickImage(AppLocalizations loc) async {
     await ImagePickerHelper.showPickerDialog(
       context,
-      (file) => setState(() => _selectedImage = file),
+      (file) => setState(() {
+        _selectedImage = file;
+        _existingAttachmentUrl = null;
+      }),
       loc,
     );
   }
@@ -131,8 +136,16 @@ class _AddReminderModalState extends ConsumerState<AddReminderModal> {
         'once': loc.reminderRecurrenceOnce,
         'daily': loc.reminderRecurrenceDaily,
         'weekly': loc.reminderRecurrenceWeekly,
-        'custom': loc.reminderRecurrenceCustom,
+        'monthly': _monthlyLabel(),
       };
+
+  String _monthlyLabel() {
+    final locale = intl.Intl.getCurrentLocale();
+    if (locale.startsWith('ar')) {
+      return 'شهري';
+    }
+    return 'Monthly';
+  }
 
   String _normalizeRecurrence(String? value) {
     if (value == null) return 'once';
@@ -140,7 +153,8 @@ class _AddReminderModalState extends ConsumerState<AddReminderModal> {
     if (normalized.contains('once') || normalized.contains('مرة')) return 'once';
     if (normalized.contains('daily') || normalized.contains('يومي')) return 'daily';
     if (normalized.contains('week') || normalized.contains('أسبوع')) return 'weekly';
-    if (normalized.contains('custom') || normalized.contains('مخصص')) return 'custom';
+    if (normalized.contains('month') || normalized.contains('شهر')) return 'monthly';
+    if (normalized.contains('custom') || normalized.contains('مخصص')) return 'once';
     return 'once';
   }
 
@@ -173,7 +187,7 @@ class _AddReminderModalState extends ConsumerState<AddReminderModal> {
 
     setState(() => _isLoading = true);
 
-    final dateStr = intl.DateFormat('yyyy-MM-dd').format(_selectedDate!);
+    final dateStr = intl.DateFormat('yyyy-MM-dd', 'en').format(_selectedDate!);
     final timeStr =
         '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
 
@@ -506,58 +520,88 @@ class _AddReminderModalState extends ConsumerState<AddReminderModal> {
     return InkWell(
       onTap: () => _pickImage(loc),
       child: Container(
-        height: 120,
+        height: 130,
         decoration: BoxDecoration(
           color: Colors.grey[50],
           border: Border.all(color: AppColors.border),
           borderRadius: BorderRadius.circular(12),
         ),
         child: _selectedImage != null
-            ? Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.file(
-                      _selectedImage!,
-                      width: double.infinity,
-                      height: 120,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.black54,
-                        shape: BoxShape.circle,
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white),
-                        onPressed: () => setState(() => _selectedImage = null),
-                      ),
-                    ),
-                  ),
-                ],
+            ? _buildAttachmentPreview(
+                Image.file(
+                  _selectedImage!,
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                ),
               )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.add_photo_alternate,
-                    size: 40,
-                    color: AppColors.textSecondary,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    loc.reminderAttachmentAdd,
-                    style: const TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 14,
+            : (_existingAttachmentUrl != null
+                ? _buildAttachmentPreview(
+                    Image.network(
+                      _existingAttachmentUrl!,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return _placeholderAttachment(loc);
+                      },
                     ),
-                  ),
-                ],
-              ),
+                  )
+                : _placeholderAttachment(loc)),
+      ),
+    );
+  }
+
+  Widget _buildAttachmentPreview(Widget image) {
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: SizedBox.expand(child: image),
+        ),
+        Positioned(
+          top: 8,
+          right: 8,
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.black54,
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white),
+              onPressed: () {
+                setState(() {
+                  _selectedImage = null;
+                  _existingAttachmentUrl = null;
+                });
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _placeholderAttachment(AppLocalizations loc) {
+    return SizedBox.expand(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.add_photo_alternate,
+            size: 40,
+            color: AppColors.textSecondary,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            loc.reminderAttachmentAdd,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 14,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }

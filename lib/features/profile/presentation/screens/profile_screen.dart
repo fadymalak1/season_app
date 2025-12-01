@@ -1,11 +1,13 @@
+import 'package:country_code_picker/country_code_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:season_app/core/constants/app_colors.dart';
 import 'package:season_app/core/localization/generated/l10n.dart';
 import 'package:season_app/core/router/routes.dart';
-import 'package:season_app/features/auth/providers.dart';
 import 'package:season_app/features/profile/providers.dart';
+import 'package:season_app/features/vendor/presentation/providers/vendor_providers.dart';
 import 'package:season_app/shared/widgets/custom_button.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -27,8 +29,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
     final profileState = ref.watch(profileControllerProvider);
+    final vendorServicesAsync = ref.watch(vendorServicesProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isRTL = Directionality.of(context) == TextDirection.rtl;
+    
+    // Check if user has services
+    final hasServices = vendorServicesAsync.maybeWhen(
+      data: (services) => services.isNotEmpty,
+      orElse: () => false,
+    );
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
@@ -78,20 +87,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   end: Alignment.bottomRight,
                                   colors: [
                                     AppColors.primary,
-                                    AppColors.primary.withOpacity(0.8),
+                                    AppColors.primary,
                                   ],
                                 ),
                               ),
                               child: SafeArea(
+                                bottom: false,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(24.0),
+                                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                                   child: Column(
                                     children: [
                                       // Settings Icon - RTL aware positioning
                                       Align(
                                         alignment: isRTL ? Alignment.topLeft : Alignment.topRight,
                                         child: Container(
-                                          margin: const EdgeInsets.only(bottom: 8),
+                                          margin: const EdgeInsets.only(bottom: 4),
                                           decoration: BoxDecoration(
                                             color: Colors.white.withOpacity(0.2),
                                             borderRadius: BorderRadius.circular(12),
@@ -108,11 +118,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                               },
                                               borderRadius: BorderRadius.circular(12),
                                               child: Padding(
-                                                padding: const EdgeInsets.all(10),
+                                                padding: const EdgeInsets.all(8),
                                                 child: Icon(
                                                   Icons.settings,
                                                   color: Colors.white,
-                                                  size: 24,
+                                                  size: 22,
                                                 ),
                                               ),
                                             ),
@@ -127,7 +137,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                               shape: BoxShape.circle,
                                               border: Border.all(
                                                 color: Colors.white,
-                                                width: 4,
+                                                width: 3,
                                               ),
                                               boxShadow: [
                                                 BoxShadow(
@@ -138,18 +148,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                               ],
                                             ),
                             child: CircleAvatar(
-                              radius: 60,
+                              radius: 48,
                               backgroundColor: Colors.white,
                               backgroundImage: profileState.profile?.avatarPath != null
                                   ? AssetImage(profileState.profile!.avatarPath!)
                                   : (profileState.profile?.photoUrl != null
-                                      ? NetworkImage(profileState.profile!.photoUrl!)
+                                      ? CachedNetworkImageProvider(
+                                          profileState.profile!.photoUrl!,
+                                        )
                                       : null) as ImageProvider?,
                               child: profileState.profile?.avatarPath == null && profileState.profile?.photoUrl == null
                                   ? Text(
                                       profileState.profile?.name[0].toUpperCase() ?? 'U',
                                       style: const TextStyle(
-                                        fontSize: 40,
+                                        fontSize: 32,
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.primary,
                                       ),
@@ -165,7 +177,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                                 context.push('/profile/edit');
                                               },
                                               child: Container(
-                                                padding: const EdgeInsets.all(8),
+                                                padding: const EdgeInsets.all(6),
                                                 decoration: BoxDecoration(
                                                   color: AppColors.secondary,
                                                   shape: BoxShape.circle,
@@ -179,34 +191,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                                 child: const Icon(
                                                   Icons.edit,
                                                   color: Colors.white,
-                                                  size: 20,
+                                                  size: 18,
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 16),
+                                      const SizedBox(height: 12),
                                       // Name
                                       Text(
                                         profileState.profile?.name ?? '',
                                         style: const TextStyle(
-                                          fontSize: 24,
+                                          fontSize: 22,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
                                       ),
                                       if (profileState.profile?.nickname != null) ...[
-                                        const SizedBox(height: 4),
+                                        const SizedBox(height: 3),
                                         Text(
                                           '@${profileState.profile!.nickname}',
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 14,
                                             color: Colors.white.withOpacity(0.9),
                                           ),
                                         ),
                                       ],
-                                      const SizedBox(height: 8),
+                                      const SizedBox(height: 6),
                                       // Email
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.center,
@@ -214,13 +226,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                           const Icon(
                                             Icons.email_outlined,
                                             color: Colors.white,
-                                            size: 16,
+                                            size: 14,
                                           ),
-                                          const SizedBox(width: 8),
+                                          const SizedBox(width: 6),
                                           Text(
                                             profileState.profile?.email ?? '',
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 13,
                                               color: Colors.white.withOpacity(0.9),
                                             ),
                                           ),
@@ -240,10 +252,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 children: [
                        
                                   const SizedBox(height: 16),
-                                  _buildInfoCard(
-                                    icon: Icons.phone,
+                                  _buildPhoneCard(
+                                    phone: profileState.profile?.phone ?? '',
+                                    isRTL: isRTL,
                                     title: loc.phone,
-                                    value: profileState.profile?.phone ?? '',
                                   ),
                                   const SizedBox(height: 12),
                                   _buildInfoCard(
@@ -262,18 +274,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                            
                                   const SizedBox(height: 24),
 
-                                  // Apply as Service Provider Button
                                   CustomButton(
-                                    text: loc.applyAsServiceProvider,
+                                    text: hasServices ? loc.myServices : loc.applyAsServiceProvider,
                                     color: AppColors.secondary,
                                     onPressed: () {
-                                      // TODO: Navigate to service provider application
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text(loc.applyAsServiceProvider),
-                                          backgroundColor: AppColors.primary,
-                                        ),
-                                      );
+                                      context.push(Routes.vendorServices);
                                     },
                                   ),
                                   const SizedBox(height: 16),
@@ -341,6 +346,99 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     fontWeight: FontWeight.w500,
                     color: AppColors.textPrimary,
                   ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPhoneCard({
+    required String phone,
+    required bool isRTL,
+    required String title,
+  }) {
+    // Parse phone to extract country code and number
+    String displayPhone = phone;
+    
+    if (phone.isNotEmpty) {
+      final plusIndex = phone.indexOf('+');
+      if (plusIndex != -1) {
+        // Find the end of the country code
+        final spaceIndex = phone.indexOf(' ', plusIndex);
+        if (spaceIndex != -1) {
+          final countryCodeStr = phone.substring(plusIndex, spaceIndex);
+          final number = phone.substring(spaceIndex + 1);
+          
+          // Try to get the country code
+          try {
+            final code = CountryCode.fromDialCode(countryCodeStr);
+            
+            // Display phone with code and number (right to left for Arabic, left to right for English)
+            if (isRTL) {
+              displayPhone = '$number ${code.dialCode}';
+            } else {
+              displayPhone = '${code.dialCode} $number';
+            }
+          } catch (e) {
+            displayPhone = phone;
+          }
+        } else {
+          displayPhone = phone;
+        }
+      }
+    }
+    
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.phone,
+              color: AppColors.primary,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  displayPhone,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textPrimary,
+                  ),
+                  textDirection: TextDirection.ltr,
                 ),
               ],
             ),

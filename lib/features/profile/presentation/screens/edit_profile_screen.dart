@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +31,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   String? _selectedGender;
   int? _selectedAvatarId;
   DateTime? _selectedDate;
+  CountryCode selectedCountryCode = CountryCode.fromDialCode('+966'); // Default to Saudi Arabia
 
   @override
   void initState() {
@@ -42,7 +44,39 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           _nameController.text = profile.name;
           _nicknameController.text = profile.nickname ?? '';
           _emailController.text = profile.email;
-          _phoneController.text = profile.phone;
+          
+          // Parse phone number to extract country code and number
+          final phone = profile.phone;
+          if (phone.isNotEmpty) {
+            // Try to find a country code in the phone number
+            final plusIndex = phone.indexOf('+');
+            if (plusIndex != -1) {
+              // Find the end of the country code (first space after + or end of string)
+              final spaceIndex = phone.indexOf(' ', plusIndex);
+              if (spaceIndex != -1) {
+                final countryCodeStr = phone.substring(plusIndex, spaceIndex);
+                final number = phone.substring(spaceIndex + 1);
+                selectedCountryCode = CountryCode.fromDialCode(countryCodeStr);
+                _phoneController.text = number;
+              } else {
+                // No space, try to parse (assume 1-4 digit country code after +)
+                for (int i = 1; i <= 4 && i < phone.length; i++) {
+                  final potentialCode = phone.substring(0, plusIndex + i + 1);
+                  try {
+                    final code = CountryCode.fromDialCode(potentialCode);
+                    selectedCountryCode = code;
+                    _phoneController.text = phone.substring(plusIndex + i + 1);
+                    break;
+                  } catch (e) {
+                    // Continue trying
+                  }
+                }
+              }
+            } else {
+              _phoneController.text = phone;
+            }
+          }
+          
           _birthDateController.text = profile.birthDate ?? '';
           _selectedGender = profile.gender;
           _selectedAvatarId = profile.avatarId;
@@ -150,11 +184,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
     print('📝 Calling updateProfile with photoFile: ${photoFile != null ? photoFile.path : "null"}');
 
+    // Combine country code with phone number
+    final fullPhoneNumber = '${selectedCountryCode.dialCode}${_phoneController.text.trim()}';
+    
     final success = await ref.read(profileControllerProvider.notifier).updateProfile(
       name: _nameController.text.trim(),
       nickname: _nicknameController.text.trim().isEmpty ? null : _nicknameController.text.trim(),
       email: _emailController.text.trim(),
-      phone: _phoneController.text.trim(),
+      phone: fullPhoneNumber,
       birthDate: _birthDateController.text.trim().isEmpty ? null : _birthDateController.text.trim(),
       gender: _selectedGender,
       avatarId: null,
@@ -287,18 +324,34 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // Phone Field
-                CustomTextField(
-                  controller: _phoneController,
-                  hintText: loc.phone,
-                  keyboardType: TextInputType.phone,
-                  prefixIcon: const Icon(Icons.phone),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Please enter phone';
-                    }
-                    return null;
-                  },
+                // Phone Field with Country Code
+                Directionality( 
+                  textDirection: TextDirection.ltr,
+                  child: CustomTextField(
+                    controller: _phoneController,
+                    hintText: loc.phone,
+                    textDirection: TextDirection.ltr,
+                    keyboardType: TextInputType.phone,
+                    showCountryPicker: true,
+                    initialCountry: selectedCountryCode,
+                    onCountryChanged: (code) {
+                      setState(() {
+                        selectedCountryCode = code;
+                      });
+                    },
+                    onChanged: (val) {
+                      // Store the full number for later
+                      setState(() {
+                        // This will be used when saving
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter phone';
+                      }
+                      return null;
+                    },
+                  ),
                 ),
                 const SizedBox(height: 16),
 

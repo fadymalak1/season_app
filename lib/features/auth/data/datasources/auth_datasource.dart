@@ -22,7 +22,7 @@ class AuthRemoteDataSource {
       "phone": phone,
       "password": password,
       "password_confirmation": passwordConfirmation,
-      "notification_token": notificationToken ?? "",
+      "fcm_token": notificationToken ?? "",
     };
 
     final response = await dio.post(
@@ -41,7 +41,7 @@ class AuthRemoteDataSource {
     final data = {
       "email": email,
       "password": password,
-      "notification_token": notificationToken ?? "",
+      "fcm_token": notificationToken ?? "",
     };
 
     final response = await dio.post(

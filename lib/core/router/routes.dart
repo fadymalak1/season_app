@@ -10,6 +10,12 @@ class Routes {
   static const String welcome = '/welcome';
   static const String verifyOtp = '/verifyOtp';
   static const String webview = '/webview';
+  // Vendor services
+  static const String vendorServices = '/vendor/services';
+  static const String vendorServiceNew = '/vendor/services/new';
+  static const String vendorServiceEdit = '/vendor/services/:id/edit';
+  static const String vendorServiceDetails = '/vendor/services/:id';
+  static const String locationPicker = '/location/picker';
   
   // Forgot Password Routes
   static const String forgotPassword = '/forgotPassword';

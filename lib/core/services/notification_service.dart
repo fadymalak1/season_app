@@ -12,6 +12,29 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint('📩 Title: ${message.notification?.title}');
   debugPrint('📩 Body: ${message.notification?.body}');
   debugPrint('📩 Data: ${message.data}');
+  
+  // Show local notification in background/terminated state
+  if (message.notification != null) {
+    final flutterLocalNotifications = FlutterLocalNotificationsPlugin();
+    const androidDetails = AndroidNotificationDetails(
+      'season_app_channel',
+      'Season App Notifications',
+      channelDescription: 'Notifications from Season App',
+      importance: Importance.high,
+      priority: Priority.high,
+      showWhen: true,
+      enableVibration: true,
+      playSound: true,
+    );
+    const notificationDetails = NotificationDetails(android: androidDetails);
+    await flutterLocalNotifications.show(
+      message.hashCode,
+      message.notification?.title ?? 'Season App',
+      message.notification?.body ?? '',
+      notificationDetails,
+    );
+    debugPrint('✅ Local notification shown in background');
+  }
 }
 
 class NotificationService {

@@ -26,20 +26,38 @@ class CustomDropdown extends ConsumerWidget {
     
     return DropdownButtonFormField<String>(
       initialValue: value,
-      items: items,
+      items: items
+          .map((e) => DropdownMenuItem<String>(
+                value: e.value,
+                child: DefaultTextStyle.merge(
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black87),
+                  child: e.child,
+                ),
+              ))
+          .toList(),
       onChanged: onChanged,
       validator: validator,
       decoration: InputDecoration(
         hintText: hintText,
         prefixIcon: prefixIcon,
+        filled: true,
+        fillColor: const Color(0xFFF7F9FC),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Color(0xFFE6ECF5)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: Color(0xFF6C8EF5), width: 1.5),
         ),
       ),
       isExpanded: true,
+      borderRadius: BorderRadius.circular(14),
+      dropdownColor: Colors.white,
+      menuMaxHeight: 320,
       icon: Icon(
-        isArabic ? Icons.arrow_back_ios : Icons.arrow_forward_ios,
+         Icons.arrow_forward_ios,
         size: 16,
       ),
     );
