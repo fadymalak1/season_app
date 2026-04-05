@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:season_app/core/constants/app_colors.dart';
-import 'package:season_app/features/home/controllers/user_qr_controller.dart';
 import 'package:season_app/core/localization/generated/l10n.dart';
+import 'package:season_app/features/reminders/data/models/reminder_model.dart';
+import 'package:season_app/features/reminders/presentation/widgets/add_reminder_modal.dart';
+import 'package:season_app/features/reminders/providers.dart';
+import 'package:season_app/features/home/presentation/widgets/bag/bag_reminders_section_widget.dart';
 
 class CardPage extends ConsumerStatefulWidget {
   const CardPage({super.key});
@@ -16,364 +19,210 @@ class _CardPageState extends ConsumerState<CardPage> {
   @override
   void initState() {
     super.initState();
-    // Load user QR data when the page initializes
+    // Load reminders when the page initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(userQrControllerProvider.notifier).loadUserQr();
+      ref.read(remindersProvider.notifier).loadReminders();
     });
+  }
+
+  void _showAddReminderModal({ReminderModel? reminder}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (context, scrollController) => AddReminderModal(reminder: reminder),
+      ),
+    );
+  }
+
+  Future<void> _deleteReminder(int reminderId) async {
+    final loc = AppLocalizations.of(context);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(loc.bagDeleteReminderTitle),
+        content: Text(loc.bagDeleteReminderMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(loc.bagDeleteCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: Text(loc.bagDeleteConfirm),
+          ),
+        ],
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (confirmed == true) {
+      final success =
+          await ref.read(remindersProvider.notifier).deleteReminder(reminderId);
+      if (!mounted) return;
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(loc.bagDeleteSuccess),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _refreshAll() async {
+    await ref.read(remindersProvider.notifier).loadReminders();
   }
 
   @override
   Widget build(BuildContext context) {
-    final userQrState = ref.watch(userQrControllerProvider);
     final l10n = AppLocalizations.of(context);
+    final remindersState = ref.watch(remindersProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        title: Text(
-          l10n.card,
-          style: const TextStyle(
-            fontFamily: 'Cairo',
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light.copyWith(
+        statusBarColor: Colors.transparent,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            userQrState.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : userQrState.error != null
-                    ? _buildErrorWidget(userQrState.error!, l10n)
-                    : userQrState.userQr != null
-                        ? _buildCardWidget(userQrState.userQr!, l10n)
-                        : const SizedBox.shrink(),
-            if (userQrState.userQr != null) ...[
-              const SizedBox(height: 24),
-              _buildInfoSection(l10n),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildErrorWidget(String error, AppLocalizations l10n) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.error_outline,
-          size: 64,
-          color: Colors.red[300],
-        ),
-        const SizedBox(height: 16),
-        Text(
-          l10n.errorLoadingCardData,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.red,
-            fontFamily: 'Cairo',
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          error,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey[600],
-            fontFamily: 'Cairo',
-          ),
-        ),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: () {
-            ref.read(userQrControllerProvider.notifier).loadUserQr();
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          child: Text(
-            l10n.retry,
-            style: const TextStyle(
-              fontFamily: 'Cairo',
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCardWidget(userQr, AppLocalizations l10n) {
-    return Container(
-      width: double.infinity,
-      height: 200,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          alignment: Alignment.topLeft,
-          children: [
-            // Background Image
-            Positioned.fill(
-              child: Image.asset(
-                'assets/images/png/card_background.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-            // Gradient overlay for better text readability
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withOpacity(0.3),
-                      Colors.black.withOpacity(0.1),
-                      Colors.black.withOpacity(0.4),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            
-            // Card Content
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // User Name
-                  Text(
-                    userQr.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Cairo',
-                      shadows: [
-                        Shadow(
-                          offset: Offset(1, 1),
-                          blurRadius: 3,
-                          color: Colors.black54,
-                        ),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-               
-                  // QR Code
-                
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: QrImageView(
-                        data: userQr.qrCodeUrl,
-                        version: QrVersions.auto,
-                        size: 80.0,
-                        
-                        foregroundColor: AppColors.primary,
-                        backgroundColor: Colors.white,
-                      ),
-                  ),
-                     const SizedBox(height: 8),
-                  // Loyalty Points
-                      Text(
-                    l10n.loyaltyPoints,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'Cairo',
-                      shadows: [
-                        Shadow(
-                          offset: Offset(1, 1),
-                          blurRadius: 2,
-                          color: Colors.black54,
-                        ),
-                      ],
-                    ),
-                  ),
-                    Text(
-                      '${userQr.coins} ${l10n.points}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Cairo',
-                        shadows: [
-                          Shadow(
-                            offset: Offset(1, 1),
-                            blurRadius: 2,
-                            color: Colors.black54,
-                          ),
+      child: Scaffold(
+        backgroundColor: AppColors.backgroundLight,
+        body: RefreshIndicator(
+          onRefresh: _refreshAll,
+          child: CustomScrollView(
+            slivers: [
+              // Header Section
+              SliverAppBar(
+                expandedHeight: 180,
+                floating: false,
+                pinned: true,
+                backgroundColor: AppColors.primary,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppColors.primary,
+                          AppColors.primary.withOpacity(0.9),
                         ],
                       ),
                     ),
-               
-             
-                  // Card Label
-             
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoSection(AppLocalizations l10n) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Header
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.primary,
-                  AppColors.primary,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
-                      width: 1,
+                    child: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            // Title and subtitle
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.25),
+                                    borderRadius: BorderRadius.circular(14),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: const Icon(
+                                    Icons.notifications_outlined,
+                                    color: Colors.white,
+                                    size: 28,
+                                  ),
+                                ),
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        l10n.bagRemindersTitle,
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontFamily: 'Cairo',
+                                          letterSpacing: 0.3,
+                                        ),
+                                      ),
+                                      Text(
+                                        l10n.reminderSubtitle,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.white.withOpacity(0.92),
+                                          fontFamily: 'Cairo',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            // Active reminders count badge
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.25),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.white,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    l10n.bagRemindersActiveCount(remindersState.activeCount),
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      fontFamily: 'Cairo',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                  child: const Icon(
-                    Icons.info_outline,
-                    color: Colors.white,
-                    size: 20,
+                ),
+              ),
+              // Content Section
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: BagRemindersSectionWidget(
+                    onAddReminder: () => _showAddReminderModal(),
+                    onEditReminder: (reminder) => _showAddReminderModal(reminder: reminder),
+                    onDeleteReminder: _deleteReminder,
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    l10n.howToUseCard,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Cairo',
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-          // Content
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-      
-                _buildInfoItem(
-                  icon: Icons.stars,
-                  title: l10n.collectPoints,
-                  color: Colors.orange,
-                ),
-                const SizedBox(height: 16),
-                _buildInfoItem(
-                  icon: Icons.card_giftcard,
-                  title: l10n.exclusiveRewards,
-                  color: Colors.purple,
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
-    );
-  }
-
-  Widget _buildInfoItem({
-    required IconData icon,
-    required String title,
-    required Color color,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 32,
-          height: 32,
-          decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Icon(
-            icon,
-            color: color,
-            size: 18,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
-              fontFamily: 'Cairo',
-              height: 1.4,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

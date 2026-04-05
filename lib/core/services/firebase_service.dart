@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:season_app/core/services/notification_service.dart';
+import 'package:season_app/core/services/app_config_service.dart';
 
 class FirebaseService {
   static bool _isInitialized = false;
@@ -23,6 +24,8 @@ class FirebaseService {
 
       // Initialize Notification Service
       await NotificationService().initialize();
+      
+      await AppConfigService.initialize();
       
     } catch (e) {
       debugPrint('❌ Error initializing Firebase: $e');

@@ -65,6 +65,7 @@
   "gallery": "المعرض",
   "changePhoto": "تغيير الصورة",
   "applyAsServiceProvider": "التقدم كمزود خدمة",
+  "applyAsTrader": "التقدم كتاجر",
   "profileUpdatedSuccessfully": "تم تحديث الملف الشخصي بنجاح",
   "errorLoadingProfile": "خطأ في تحميل الملف الشخصي",
   "errorUpdatingProfile": "خطأ في تحديث الملف الشخصي",
@@ -186,7 +187,6 @@
   "points": "نقاط",
   "loyaltyCard": "بطاقة الولاء",
   "errorLoadingCardData": "خطأ في تحميل بيانات البطاقة",
-  "retry": "إعادة المحاولة",
   "loyaltyPoints": "نقاط الولاء",
   "howToUseCard": "كيف تستخدم البطاقة",
   "qrCodeUsage": "أستخدم رمز الاستجابة السريعة QR للربط مع الأجهزة ضمن المجموعات الأمنة",
@@ -218,13 +218,11 @@
   ,"areYouSureDelete":"حذف الخدمة؟"
   ,"areYouSureDeleteMessage":"سيتم حذف الخدمة نهائيًا."
   ,"update":"تحديث"
-  ,"create":"إنشاء"
   ,"serviceName":"اسم الخدمة"
   ,"enable":"تفعيل"
   ,"disable":"تعطيل"
   ,"deletePermanently":"حذف نهائي"
-  ,"confirm":"تأكيد",
-  "serviceImages":"صور الخدمة"
+  ,"serviceImages":"صور الخدمة"
   ,"myServices":"خدماتي"
   ,"bagTitle":"حقيبة السفر"
   ,"bagSubtitle":"شنطة الشحن الرئيسية"
@@ -276,6 +274,17 @@
   ,"bagNoCategories":"لا توجد تصنيفات متاحة حالياً."
   ,"bagNoItems":"لا توجد عناصر متاحة لهذا التصنيف."
   ,"bagLoadingItems":"جاري تحميل العناصر..."
+  ,"bagEditMaxWeight":"تعديل الحد الأقصى للوزن"
+  ,"bagMaxWeightLabel":"الحد الأقصى للوزن"
+  ,"bagMaxWeightPlaceholder":"أدخل الحد الأقصى للوزن"
+  ,"bagMaxWeightRequired":"الحد الأقصى للوزن مطلوب"
+  ,"bagMaxWeightInvalid":"يرجى إدخال وزن صحيح"
+  ,"bagWeightUnitLabel":"وحدة الوزن"
+  ,"bagSelectWeightUnit":"اختر وحدة الوزن"
+  ,"bagMaxWeightUpdated":"تم تحديث الحد الأقصى للوزن بنجاح"
+  ,"bagWeightUnitKg":"كجم"
+  ,"bagMaxWeightInfo":"اضبط الحد الأقصى للوزن لحقيبتك. يتم قياس الوزن دائماً بالكيلوجرام."
+  ,"save":"حفظ"
   ,"reminderLoadError":"تعذر تحديث التذكيرات، يرجى المحاولة مرة أخرى."
   ,"reminderAddTitle":"إضافة تذكير"
   ,"reminderEditTitle":"تعديل التذكير"
@@ -305,4 +314,67 @@
   ,"reminderSaveError":"حدث خطأ أثناء حفظ التذكير."
   ,"imagePickerGallery":"اختيار من المعرض"
   ,"imagePickerCamera":"استخدام الكاميرا"
+  ,"emergencyNumbers":"أرقام الطوارئ"
+  ,"emergencySubtitle":"وصول سريع لخدمات الطوارئ"
+  ,"emergencyFire":"الإطفاء"
+  ,"emergencyPolice":"الشرطة"
+  ,"emergencyAmbulance":"الإسعاف"
+  ,"emergencyEmbassy":"السفارة"
+  ,"emergencyError":"فشل تحميل أرقام الطوارئ"
+  ,"emergencyErrorDescription":"يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى"
+  ,"emergencyQuickAccess":"اضغط لعرض جهات اتصال الطوارئ"
+  ,"country":"الدولة"
+  ,"required":"مطلوب"
+  ,"currencyConverter":"محول العملة"
+  ,"currencyConverterSubtitle":"تحويل العملات فوراً"
+  ,"currencyFrom":"من"
+  ,"currencyTo":"إلى"
+  ,"currencyAmount":"المبلغ"
+  ,"currencyAmountPlaceholder":"أدخل المبلغ"
+  ,"currencyAmountRequired":"يرجى إدخال المبلغ"
+  ,"currencyAmountInvalid":"يرجى إدخال مبلغ صحيح"
+  ,"currencyConvert":"تحويل"
+  ,"currencyRate":"السعر"
+  ,"currencyConvertedAmount":"المبلغ المحول"
+  ,"currencyExchangeRate":"سعر الصرف الإرشادي"
+  ,"vendorServices":"خدمات البائعين"
+  ,"viewAll":"عرض الكل"
+  ,"digitalDirectory":"الدليل الرقمي"
+  ,"geographicDirectory":"الدليل الجغرافي"
+  ,"noCategoriesAvailable":"لا توجد تصنيفات متاحة"
+  ,"noAppsAvailable":"لا توجد تطبيقات متاحة"
+  ,"events":"الفعاليات"
+  ,"yourLoyaltyPoints":"نقاط الولاء الخاصة بك"
+  ,"availablePoints":"نقطة متاحة"
+  ,"redeemSoon":"استبدل قريبًا"
+  ,"showPointsCard":"عرض بطاقة النقاط"
+  ,"onboardingSkip":"تخطي"
+  ,"onboardingNext":"التالي"
+  ,"onboardingStart":"أبدأ الاستكشاف"
+  ,"onboardingTitle1":"خدمات الدليل"
+  ,"onboardingDescription1":"كل ما تحتاجه في مكان واحد"
+  ,"onboardingTitle2":"أدوات السفر الذكية"
+  ,"onboardingDescription2":"خطط رحلتك بسهولة مع حقيبة السفر الذكية، دليل الطوارئ، والفعاليات المحلية"
+  ,"onboardingTitle3":"مكافآت ونقاط ولاء"
+  ,"onboardingDescription3":"أكسب نقاط مع كل حجز واستبدلها بخصومات حصرية ومزايا فريدة"
+  ,"connectionErrorTitle":"خطأ في الاتصال"
+  ,"connectionErrorMessage":"تعذر الاتصال بالخادم.\nيرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى."
+  ,"retry":"إعادة المحاولة"
+  ,"retrying":"جاري إعادة المحاولة..."
+  ,"backToHome":"العودة للرئيسية"
+  ,"connectionFailed":"فشل الاتصال. يرجى المحاولة مرة أخرى لاحقاً."
+  ,"weightExceeded":"تم تجاوز الوزن المسموح"
+  ,"weightExceededMessage":"سيتم تجاوز الوزن الأقصى المسموح به ({maxWeight} كجم). الوزن الحالي: {currentWeight} كجم. وزن العنصر: {itemWeight} كجم."
+  ,"@weightExceededMessage":{
+    "placeholders":{
+      "maxWeight":{"type":"String"},
+      "currentWeight":{"type":"String"},
+      "itemWeight":{"type":"String"}
+    }
+  }
+  ,"support":"الدعم الفني"
+  ,"contactUs":"تواصل معي"
+  ,"reportIssue":"الإبلاغ عن مشكلة"
+  ,"contactUsSubtitle":"أبلغ عن المشاكل أو تواصل مع الدعم عبر واتساب"
+  ,"whatsappNotInstalled":"واتساب غير مثبت على جهازك"
 }

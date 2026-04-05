@@ -43,11 +43,7 @@ class AgreementPolicy extends StatelessWidget {
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
                   context.push(
-                    Routes.webview,
-                    extra: {
-                      'title': isArabic ? 'الشروط والأحكام' : 'Terms & Conditions',
-                      'url': 'https://example.com/terms', // عدّل اللينك
-                    },
+                    '${Routes.webview}?url=${Uri.encodeComponent('https://seasonksa.com/terms')}&title=${Uri.encodeComponent(isArabic ? 'الشروط والأحكام' : 'Terms & Conditions')}',
                   );
                 },
             ),
@@ -68,11 +64,7 @@ class AgreementPolicy extends StatelessWidget {
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
                   context.push(
-                    Routes.webview,
-                    extra: {
-                      'title': isArabic ? 'سياسة الخصوصية' : 'Privacy Policy',
-                      'url': 'https://example.com/privacy', // عدّل اللينك
-                    },
+                    '${Routes.webview}?url=${Uri.encodeComponent('https://seasonksa.com/privacy')}&title=${Uri.encodeComponent(isArabic ? 'سياسة الخصوصية' : 'Privacy Policy')}',
                   );
                 },
             ),

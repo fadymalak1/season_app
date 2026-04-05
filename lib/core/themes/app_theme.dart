@@ -29,6 +29,7 @@ class AppTheme {
       foregroundColor: Colors.black,
       elevation: 0,
       centerTitle: true,
+
       titleTextStyle: TextStyle(
         fontFamily: 'Cairo',  // هنا برضو بنحدد الخط في الـ AppBar
         fontSize: 20,
@@ -77,6 +78,7 @@ class AppTheme {
       foregroundColor: Colors.white,
       elevation: 0,
       centerTitle: true,
+
     ),
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.primary,

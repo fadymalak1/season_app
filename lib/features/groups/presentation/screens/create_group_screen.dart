@@ -203,9 +203,9 @@ class _CreateGroupScreenState extends ConsumerState<CreateGroupScreen> {
                       ),
                       child: Slider(
                         value: _safetyRadius.toDouble(),
-                        min: 50,
-                        max: 5000,
-                        divisions: 99,
+                        min: 30,
+                        max: 1000,
+                        divisions: 97,
                         onChanged: (value) {
                           setState(() {
                             _safetyRadius = value.toInt();

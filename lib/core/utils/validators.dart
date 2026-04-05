@@ -22,14 +22,12 @@ class Validators {
     return null;
   }
 
-  static String? phone(String? value, {bool isArabic = true}) {
+  static String? phone(String? value, {bool isArabic = true, String? countryCode}) {
     if (value == null || value.isEmpty) {
       return isArabic ? 'رقم الهاتف مطلوب' : 'Phone number is required';
     }
-    final phoneRegex = RegExp(r'^[0-9]{10,15}$');
-    if (!phoneRegex.hasMatch(value)) {
-      return isArabic ? 'رقم الهاتف غير صالح' : 'Invalid phone number';
-    }
+    
+ 
     return null;
   }
 

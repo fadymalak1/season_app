@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:season_app/core/services/dio_client.dart';
 import 'package:season_app/features/home/data/datasources/bag_remote_datasource.dart';
@@ -91,11 +92,10 @@ class BagState {
 }
 
 class BagNotifier extends Notifier<BagState> {
-  late final BagRepository _repository;
+  BagRepository get _repository => ref.read(bagRepositoryProvider);
 
   @override
   BagState build() {
-    _repository = ref.read(bagRepositoryProvider);
     Future.microtask(_loadInitialData);
     return BagState.initial();
   }
@@ -103,9 +103,10 @@ class BagNotifier extends Notifier<BagState> {
   Future<void> _loadInitialData() async {
     state = state.copyWith(isLoading: true, error: null);
     try {
+      // Only load bagTypes and categories on initial load
+      // Bags will be loaded when bag screen opens
       final bagTypes = await _repository.getBagTypes();
       final categories = await _repository.getCategories();
-      final bagDetails = await _repository.getBagDetails();
 
       BagTypeModel? selectedBagType = state.selectedBagType;
       if (bagTypes.isNotEmpty) {
@@ -130,7 +131,9 @@ class BagNotifier extends Notifier<BagState> {
         selectedBagType: selectedBagType,
         selectedCategory: selectedCategory,
         items: items,
-        bagDetails: bagDetails,
+        // Preserve existing bagDetails if they were already loaded
+        // Don't clear them here - they will be loaded when bag screen opens
+        bagDetails: state.bagDetails, // Keep existing bags
         isLoading: false,
         isLoadingItems: false,
         isLoadingBagDetails: false,
@@ -149,13 +152,36 @@ class BagNotifier extends Notifier<BagState> {
   Future<void> loadBagDetails() async {
     state = state.copyWith(isLoadingBagDetails: true, error: null);
     try {
+      debugPrint('📦 Loading bags from Smart Bags API...');
       final bagDetails = await _repository.getBagDetails();
+      debugPrint('✅ Loaded ${bagDetails.length} bags from repository');
+      debugPrint('   Bag IDs: ${bagDetails.map((b) => b.bagId).toList()}');
+      
       state = state.copyWith(
         bagDetails: bagDetails,
         isLoadingBagDetails: false,
+        error: null,
       );
-    } catch (e) {
+      
+      debugPrint('✅ State updated - bagDetails count: ${state.bagDetails.length}');
+    } on ApiException catch (e) {
+      // Handle API errors with better messages
+      String errorMessage = e.message;
+      if (e.message.contains('travel_bag_id') || e.message.contains('Column not found')) {
+        errorMessage = 'Backend database error: Smart Bags API is using incorrect column name. '
+            'Please check BACKEND_FIX_SMART_BAGS_API.md for details.';
+      }
+      debugPrint('❌ API Error loading bags: $errorMessage');
       state = state.copyWith(
+        bagDetails: [], // Set empty list on error
+        isLoadingBagDetails: false,
+        error: errorMessage,
+      );
+    } catch (e, stackTrace) {
+      debugPrint('❌ Error loading bags: $e');
+      debugPrint('   Stack trace: $stackTrace');
+      state = state.copyWith(
+        bagDetails: [], // Set empty list on error
         isLoadingBagDetails: false,
         error: e.toString(),
       );
@@ -163,15 +189,31 @@ class BagNotifier extends Notifier<BagState> {
   }
 
   Future<bool> addItemToBag({
-    required int itemId,
+    int? itemId,
     required int bagTypeId,
     required int quantity,
+    String? customItemName,
+    double? customWeight,
+    String? weightUnit,
+    int? itemCategoryId, // Use item_category_id instead of category
+    String? category, // Deprecated - kept for backward compatibility
+    bool? essential,
+    bool? packed,
+    String? notes,
   }) async {
     try {
       await _repository.addItemToBag(
         itemId: itemId,
         bagTypeId: bagTypeId,
         quantity: quantity,
+        customItemName: customItemName,
+        customWeight: customWeight,
+        weightUnit: weightUnit,
+        itemCategoryId: itemCategoryId,
+        category: category,
+        essential: essential,
+        packed: packed,
+        notes: notes,
       );
       await loadBagDetails();
       return true;
@@ -273,8 +315,284 @@ class BagNotifier extends Notifier<BagState> {
     await selectCategory(category);
   }
 
+  Future<bool> updateMaxWeight({
+    required double maxWeight,
+    required String weightUnit,
+    required int bagTypeId,
+  }) async {
+    try {
+      await _repository.updateMaxWeight(
+        maxWeight: maxWeight,
+        weightUnit: weightUnit,
+        bagTypeId: bagTypeId,
+      );
+      await loadBagDetails();
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(error: e.message);
+      rethrow;
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return false;
+    }
+  }
+
   Future<void> reload() async {
     await _loadInitialData();
+  }
+
+  Future<bool> setTravelDate({
+    required int bagTypeId,
+    required String date,
+    required String time,
+    String? timezone,
+  }) async {
+    try {
+      await _repository.setTravelDate(
+        bagTypeId: bagTypeId,
+        date: date,
+        time: time,
+        timezone: timezone,
+      );
+      await loadBagDetails();
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(error: e.message);
+      rethrow;
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getBagReminder({
+    required int bagTypeId,
+  }) async {
+    try {
+      return await _repository.getBagReminder(bagTypeId: bagTypeId);
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> getBagItems({
+    required int bagTypeId,
+  }) async {
+    try {
+      return await _repository.getBagItems(bagTypeId: bagTypeId);
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return null;
+    }
+  }
+  
+  /// Create a new bag using Smart Bags API
+  Future<BagDetailModel?> createBag({
+    required String name,
+    required String tripType,
+    required int duration,
+    required String destination,
+    required DateTime departureDate,
+    required double maxWeight,
+    String? status,
+    Map<String, dynamic>? preferences,
+    List<Map<String, dynamic>>? items,
+  }) async {
+    try {
+      final bag = await _repository.createBag(
+        name: name,
+        tripType: tripType,
+        duration: duration,
+        destination: destination,
+        departureDate: departureDate,
+        maxWeight: maxWeight,
+        status: status,
+        preferences: preferences,
+        items: items,
+      );
+      await loadBagDetails();
+      return bag;
+    } on ApiException catch (e) {
+      state = state.copyWith(error: e.message);
+      return null;
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return null;
+    }
+  }
+  
+  /// Update bag using Smart Bags API
+  Future<bool> updateBag({
+    required int bagId,
+    String? name,
+    String? tripType,
+    int? duration,
+    String? destination,
+    DateTime? departureDate,
+    double? maxWeight,
+    String? status,
+    Map<String, dynamic>? preferences,
+  }) async {
+    try {
+      await _repository.updateBag(
+        bagId: bagId,
+        name: name,
+        tripType: tripType,
+        duration: duration,
+        destination: destination,
+        departureDate: departureDate,
+        maxWeight: maxWeight,
+        status: status,
+        preferences: preferences,
+      );
+      await loadBagDetails();
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(error: e.message);
+      return false;
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return false;
+    }
+  }
+  
+  /// Delete bag using Smart Bags API
+  Future<bool> deleteBag(int bagId) async {
+    try {
+      await _repository.deleteBag(bagId);
+      await loadBagDetails();
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(error: e.message);
+      return false;
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return false;
+    }
+  }
+  
+  /// Update item
+  Future<bool> updateItem({
+    required int bagId,
+    required int itemId,
+    String? name,
+    double? weight,
+    int? itemCategoryId,
+    int? quantity,
+    bool? essential,
+    bool? packed,
+    String? notes,
+  }) async {
+    try {
+      await _repository.updateItem(
+        bagId: bagId,
+        itemId: itemId,
+        name: name,
+        weight: weight,
+        itemCategoryId: itemCategoryId,
+        quantity: quantity,
+        essential: essential,
+        packed: packed,
+        notes: notes,
+      );
+      await loadBagDetails();
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(error: e.message);
+      return false;
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return false;
+    }
+  }
+
+  /// Toggle item packed status
+  Future<bool> toggleItemPacked({
+    required int bagId,
+    required int itemId,
+  }) async {
+    try {
+      await _repository.toggleItemPacked(bagId: bagId, itemId: itemId);
+      await loadBagDetails();
+      return true;
+    } on ApiException catch (e) {
+      state = state.copyWith(error: e.message);
+      return false;
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return false;
+    }
+  }
+  
+  /// Analyze bag with AI
+  Future<Map<String, dynamic>?> analyzeBag({
+    required int bagId,
+    Map<String, dynamic>? preferences,
+    bool? forceReanalysis,
+  }) async {
+    try {
+      final analysis = await _repository.analyzeBag(
+        bagId: bagId,
+        preferences: preferences,
+        forceReanalysis: forceReanalysis,
+      );
+      await loadBagDetails();
+      return analysis;
+    } on ApiException catch (e) {
+      // Re-throw ApiException so the screen can handle it with full error details
+      state = state.copyWith(error: e.message);
+      rethrow;
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      rethrow;
+    }
+  }
+  
+  /// Get latest analysis
+  Future<Map<String, dynamic>?> getLatestAnalysis(int bagId) async {
+    try {
+      return await _repository.getLatestAnalysis(bagId);
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return null;
+    }
+  }
+
+  /// Get analysis history
+  Future<List<Map<String, dynamic>>> getAnalysisHistory({
+    required int bagId,
+    int? perPage,
+  }) async {
+    try {
+      return await _repository.getAnalysisHistory(bagId: bagId, perPage: perPage);
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return [];
+    }
+  }
+
+  /// Get smart alert
+  Future<Map<String, dynamic>?> getSmartAlert(int bagId) async {
+    try {
+      return await _repository.getSmartAlert(bagId);
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      return null;
+    }
+  }
+  
+  /// Get bag detail by ID
+  Future<BagDetailModel> getBagDetailById(int bagId) async {
+    try {
+      return await _repository.getBagDetailById(bagId);
+    } on ApiException catch (e) {
+      state = state.copyWith(error: e.message);
+      rethrow;
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+      rethrow;
+    }
   }
 }
 

@@ -3,19 +3,26 @@ import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:season_app/features/vendor/data/vendor_models.dart';
 import 'package:season_app/features/vendor/data/vendor_service_api.dart';
+import 'package:season_app/shared/providers/locale_provider.dart';
 
 // Service types
 final serviceTypesProvider = FutureProvider<List<ServiceTypeModel>>((ref) async {
   return ref.read(vendorServiceApiProvider).getServiceTypes();
 });
 
+// Countries - watches locale to refetch when language changes
+final countriesProvider = FutureProvider<List<CountryModel>>((ref) async {
+  // Watch locale to refetch countries when language changes
+  ref.watch(localeProvider);
+  return ref.read(vendorServiceApiProvider).getCountries();
+});
+
 // Vendor services list (AsyncNotifier in Riverpod v3)
 class VendorServicesController extends AsyncNotifier<List<VendorServiceSummary>> {
-  late final VendorServiceApi _api;
+  VendorServiceApi get _api => ref.read(vendorServiceApiProvider);
 
   @override
   Future<List<VendorServiceSummary>> build() async {
-    _api = ref.read(vendorServiceApiProvider);
     return _api.getVendorServices();
   }
 
@@ -56,7 +63,8 @@ final vendorServicesProvider =
 });
 
 // Details
-final vendorServiceDetailsProvider = FutureProvider.family<VendorServiceDetails, int>((ref, id) async {
+final vendorServiceDetailsProvider =
+    FutureProvider.family<VendorServiceDetails, int>((ref, id) async {
   return ref.read(vendorServiceApiProvider).getVendorServiceDetails(id);
 });
 
@@ -65,15 +73,31 @@ class VendorServiceFormController {
   VendorServiceFormController(this.ref);
   final Ref ref;
 
-  Future<void> create(Map<String, dynamic> fields, {File? register, List<File> images = const []}) async {
-    await ref.read(vendorServiceApiProvider).createVendorService(fields,
-        commercialRegister: register, images: images);
+  Future<void> create(
+    Map<String, dynamic> fields, {
+    File? register,
+    List<File> images = const [],
+  }) async {
+    await ref.read(vendorServiceApiProvider).createVendorService(
+          fields,
+          commercialRegister: register,
+          images: images,
+        );
     await ref.read(vendorServicesProvider.notifier).refresh();
   }
 
-  Future<void> update(int id, Map<String, dynamic> fields, {File? register, List<File> images = const []}) async {
-    await ref.read(vendorServiceApiProvider).updateVendorService(id, fields,
-        commercialRegister: register, images: images);
+  Future<void> update(
+    int id,
+    Map<String, dynamic> fields, {
+    File? register,
+    List<File> images = const [],
+  }) async {
+    await ref.read(vendorServiceApiProvider).updateVendorService(
+          id,
+          fields,
+          commercialRegister: register,
+          images: images,
+        );
     // Refresh list
     await ref.read(vendorServicesProvider.notifier).refresh();
     // Invalidate details so next watch re-fetches latest
@@ -81,8 +105,24 @@ class VendorServiceFormController {
   }
 }
 
-final vendorServiceFormControllerProvider = Provider<VendorServiceFormController>((ref) {
+final vendorServiceFormControllerProvider =
+    Provider<VendorServiceFormController>((ref) {
   return VendorServiceFormController(ref);
 });
 
+// Public Vendor Services (for home screen and public listing)
+final publicVendorServicesProvider = FutureProvider<List<PublicVendorService>>((ref) async {
+  // Watch locale to refetch when language changes
+  ref.watch(localeProvider);
+  return ref.read(vendorServiceApiProvider).getPublicVendorServices();
+});
 
+// Public Vendor Service Details
+final publicVendorServiceDetailsProvider =
+    FutureProvider.family<PublicVendorService, int>((ref, id) async {
+  // Watch locale to refetch when language changes
+  ref.watch(localeProvider);
+  // Get all services and find the one with matching id
+  final services = await ref.read(vendorServiceApiProvider).getPublicVendorServices();
+  return services.firstWhere((s) => s.id == id);
+});

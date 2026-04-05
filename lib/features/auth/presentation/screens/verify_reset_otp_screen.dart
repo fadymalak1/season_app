@@ -38,7 +38,7 @@ class _VerifyResetOtpScreenState extends ConsumerState<VerifyResetOtpScreen> {
 
   void startTimer() {
     timer?.cancel();
-    ref.read(otpTimerProvider.notifier).state = 300;
+    ref.read(otpTimerProvider.notifier).state = 120; // 2 minutes
     ref.read(otpTimerRunningProvider.notifier).state = true;
 
     timer = Timer.periodic(const Duration(seconds: 1), (t) {
@@ -173,7 +173,7 @@ class _VerifyResetOtpScreenState extends ConsumerState<VerifyResetOtpScreen> {
                 CustomButton(
                   text: resetPasswordState.isLoading ? tr.loading : tr.verify,
                   color: AppColors.primary,
-                  onPressed: (pinController.text.length < 4 || resetPasswordState.isLoading)
+                  onPressed: (pinController.text.length != 4 || resetPasswordState.isLoading)
                       ? null
                       : () async {
                     await ref.read(resetPasswordControllerProvider.notifier).verifyResetOtp(

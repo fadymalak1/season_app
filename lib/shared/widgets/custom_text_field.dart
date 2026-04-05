@@ -51,9 +51,12 @@ class CustomTextField extends ConsumerWidget {
         hintText: hintText,
         prefixIcon: showCountryPicker
             ? CountryCodePicker(
+          key: ValueKey(
+            '${initialCountry?.code ?? ''}_${initialCountry?.dialCode ?? ''}',
+          ),
           onChanged: onCountryChanged,
-          initialSelection: initialCountry?.code ?? 'KSA',
-          favorite: const ['+966', 'KSA', '+20', 'EG',],
+          initialSelection: initialCountry?.code ?? 'SA',
+          favorite: const ['+966', 'SA', '+20', 'EG'],
           showCountryOnly: false,
           alignLeft: false,
           showOnlyCountryWhenClosed: false,

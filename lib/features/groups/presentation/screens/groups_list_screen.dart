@@ -54,6 +54,7 @@ class _GroupsListScreenState extends ConsumerState<GroupsListScreen> {
             floating: false,
             pinned: true,
             backgroundColor: AppColors.primary,
+
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
                 decoration: BoxDecoration(

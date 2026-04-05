@@ -10,6 +10,7 @@ class AppAssets {
   static const String onBoardingTranslate = 'assets/images/png/onboarding_translate.png';
   static const String seasonIcon = 'assets/images/png/season_icon.png';
   static const String appLogo = 'assets/images/png/app_logo.png';
+  static const String splashAnimation = 'assets/splash.json';
   static const String seasonWelcomeImage = 'assets/images/png/season_welcome.png';
   static const String seasonAuthImage = 'assets/images/png/season_auth.png';
   static const String forgetPasswordIcon = 'assets/images/png/forget_password_icon.png';
@@ -94,6 +95,11 @@ class AppAssets {
   static const String storesBackground = 'assets/images/png/home/stores_background.png';
   static const String locationMarker = 'assets/images/png/home/location_marker.png';
   static const String onBoardingBackground = 'assets/images/png/on_boarding_background.png';
+  static const String onboarding1 = 'assets/images/png/onboarding_1.png';
+  static const String onboarding2 = 'assets/images/png/onboarding_2.png';
+  static const String onboarding3 = 'assets/images/png/onboarding_3.png';
+  static const String smartSecurityAgentEn = 'assets/images/png/smart_security_agent_en.png';
+  static const String smartSecurityAgentAr = 'assets/images/png/smart_security_agent_ar.png';
   static const String buttonBackground = 'assets/images/svg/button_background.svg';
   static const String buttonBackgroundRounded = 'assets/images/svg/button_background_rounded.svg';
   static const String loading = 'assets/images/gif/loading.gif';

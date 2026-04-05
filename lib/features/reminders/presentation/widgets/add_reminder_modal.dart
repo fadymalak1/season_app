@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:season_app/core/utils/timezone_helper.dart';
 import 'package:season_app/core/constants/app_colors.dart';
 import 'package:season_app/core/localization/generated/l10n.dart';
 import 'package:season_app/features/reminders/data/models/reminder_model.dart';
@@ -71,10 +72,20 @@ class _AddReminderModalState extends ConsumerState<AddReminderModal> {
 
   Future<void> _selectDate() async {
     final locale = Localizations.localeOf(context);
+    
+    // When editing, allow past dates. When creating new, only allow future dates.
+    final isEditing = widget.reminder != null;
+    final initialDate = _selectedDate ?? DateTime.now();
+    
+    // Set firstDate: allow past dates when editing, otherwise only future dates
+    final firstDate = isEditing 
+        ? DateTime.now().subtract(const Duration(days: 365 * 2)) // Allow 2 years in the past when editing
+        : DateTime.now(); // Only future dates for new reminders
+    
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime.now(),
+      initialDate: initialDate,
+      firstDate: firstDate,
       lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
       locale: locale,
       builder: (context, child) {
@@ -169,6 +180,10 @@ class _AddReminderModalState extends ConsumerState<AddReminderModal> {
     return intl.DateFormat.jm(localeName).format(dateTime);
   }
 
+  Future<String> _getUserTimezone() async {
+    return await TimezoneHelper.getDeviceTimezone();
+  }
+
   Future<void> _saveReminder(AppLocalizations loc) async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -191,6 +206,9 @@ class _AddReminderModalState extends ConsumerState<AddReminderModal> {
     final timeStr =
         '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
 
+    // Get user's actual timezone
+    final userTimezone = await _getUserTimezone();
+
     bool success;
     if (widget.reminder != null) {
       success = await ref.read(remindersProvider.notifier).updateReminder(
@@ -200,7 +218,7 @@ class _AddReminderModalState extends ConsumerState<AddReminderModal> {
             time: timeStr,
             recurrence: _selectedRecurrence,
             notes: _notesController.text.isEmpty ? null : _notesController.text,
-            timezone: 'Africa/Cairo',
+            timezone: userTimezone,
             attachment: _selectedImage,
           );
     } else {
@@ -210,7 +228,7 @@ class _AddReminderModalState extends ConsumerState<AddReminderModal> {
             time: timeStr,
             recurrence: _selectedRecurrence,
             notes: _notesController.text.isEmpty ? null : _notesController.text,
-            timezone: 'Africa/Cairo',
+            timezone: userTimezone,
             attachment: _selectedImage,
           );
     }

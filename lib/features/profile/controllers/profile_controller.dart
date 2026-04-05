@@ -33,11 +33,10 @@ class ProfileState {
 }
 
 class ProfileController extends Notifier<ProfileState> {
-  late ProfileRepository repository;
+  ProfileRepository get repository => ref.read(profileRepositoryProvider);
 
   @override
   ProfileState build() {
-    repository = ref.read(profileRepositoryProvider);
     return ProfileState();
   }
 
@@ -62,18 +61,18 @@ class ProfileController extends Notifier<ProfileState> {
     required String name,
     String? nickname,
     required String email,
-    required String phone,
+    String? phone,
     String? birthDate,
     String? gender,
     int? avatarId,
     File? photoFile,
   }) async {
     state = state.copyWith(isUpdating: true, error: null);
-    
+
     try {
       print('🎮 Controller: photoFile is ${photoFile != null ? "provided" : "null"}');
       print('🎮 Controller: avatarId is $avatarId');
-      
+
       final updatedProfile = await repository.updateProfile(
         name: name,
         nickname: nickname,

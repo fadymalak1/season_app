@@ -364,6 +364,7 @@ class _SosAlertsScreenState extends ConsumerState<SosAlertsScreen> {
             floating: false,
             pinned: true,
             backgroundColor: AppColors.error,
+   
             leading: IconButton(
               onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.arrow_back, color: Colors.white),

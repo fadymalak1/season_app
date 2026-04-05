@@ -26,7 +26,7 @@ class ProfileRepository {
     required String name,
     String? nickname,
     required String email,
-    required String phone,
+    String? phone,
     String? birthDate,
     String? gender,
     int? avatarId,
@@ -35,7 +35,7 @@ class ProfileRepository {
     try {
       print('🔄 Repository: photoFile is ${photoFile != null ? "provided" : "null"}');
       print('🔄 Repository: avatarId is $avatarId');
-      
+
       final response = await remoteDataSource.updateProfile(
         name: name,
         nickname: nickname,

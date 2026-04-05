@@ -28,6 +28,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m3(userName) => "أهلاً يا ${userName}!";
 
+  static String m4(maxWeight, currentWeight, itemWeight) =>
+      "سيتم تجاوز الوزن الأقصى المسموح به (${maxWeight} كجم). الوزن الحالي: ${currentWeight} كجم. وزن العنصر: ${itemWeight} كجم.";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "about": MessageLookupByLibrary.simpleMessage("حول"),
@@ -57,6 +60,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "applyAsServiceProvider": MessageLookupByLibrary.simpleMessage(
       "التقدم كمزود خدمة",
     ),
+    "applyAsTrader": MessageLookupByLibrary.simpleMessage("التقدم كتاجر"),
     "arabic": MessageLookupByLibrary.simpleMessage("العربية"),
     "areYouSureDelete": MessageLookupByLibrary.simpleMessage("حذف الخدمة؟"),
     "areYouSureDeleteMessage": MessageLookupByLibrary.simpleMessage(
@@ -65,6 +69,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "askForCode": MessageLookupByLibrary.simpleMessage(
       "أو اطلب الكود من منشئ المجموعة",
     ),
+    "availablePoints": MessageLookupByLibrary.simpleMessage("نقطة متاحة"),
+    "backToHome": MessageLookupByLibrary.simpleMessage("العودة للرئيسية"),
     "bag": MessageLookupByLibrary.simpleMessage("الحقيبة"),
     "bagAISuggestionsButton": MessageLookupByLibrary.simpleMessage(
       "اقتراحات الذكاء الاصطناعي",
@@ -104,6 +110,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "bagDeleteSuccess": MessageLookupByLibrary.simpleMessage(
       "تم حذف التذكير بنجاح.",
     ),
+    "bagEditMaxWeight": MessageLookupByLibrary.simpleMessage(
+      "تعديل الحد الأقصى للوزن",
+    ),
     "bagEmptyDescription": MessageLookupByLibrary.simpleMessage(
       "ابدأ بإضافة أغراضك للاستعداد للسفر.",
     ),
@@ -117,6 +126,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "bagItemsTitle": MessageLookupByLibrary.simpleMessage("عناصر مقترحة"),
     "bagLoadingItems": MessageLookupByLibrary.simpleMessage(
       "جاري تحميل العناصر...",
+    ),
+    "bagMaxWeightInfo": MessageLookupByLibrary.simpleMessage(
+      "اضبط الحد الأقصى للوزن لحقيبتك. يتم قياس الوزن دائماً بالكيلوجرام.",
+    ),
+    "bagMaxWeightInvalid": MessageLookupByLibrary.simpleMessage(
+      "يرجى إدخال وزن صحيح",
+    ),
+    "bagMaxWeightLabel": MessageLookupByLibrary.simpleMessage(
+      "الحد الأقصى للوزن",
+    ),
+    "bagMaxWeightPlaceholder": MessageLookupByLibrary.simpleMessage(
+      "أدخل الحد الأقصى للوزن",
+    ),
+    "bagMaxWeightRequired": MessageLookupByLibrary.simpleMessage(
+      "الحد الأقصى للوزن مطلوب",
+    ),
+    "bagMaxWeightUpdated": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث الحد الأقصى للوزن بنجاح",
     ),
     "bagNoCategories": MessageLookupByLibrary.simpleMessage(
       "لا توجد تصنيفات متاحة حالياً.",
@@ -144,6 +171,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "bagSelectItemPlaceholder": MessageLookupByLibrary.simpleMessage(
       "اختر العنصر",
     ),
+    "bagSelectWeightUnit": MessageLookupByLibrary.simpleMessage(
+      "اختر وحدة الوزن",
+    ),
     "bagSubtitle": MessageLookupByLibrary.simpleMessage("شنطة الشحن الرئيسية"),
     "bagTip1": MessageLookupByLibrary.simpleMessage(
       "ضع الأشياء الثقيلة في أسفل الحقيبة.",
@@ -170,6 +200,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "تم تحديث الكمية بنجاح.",
     ),
     "bagWeight": m2,
+    "bagWeightUnitKg": MessageLookupByLibrary.simpleMessage("كجم"),
+    "bagWeightUnitLabel": MessageLookupByLibrary.simpleMessage("وحدة الوزن"),
     "birthDate": MessageLookupByLibrary.simpleMessage("تاريخ الميلاد"),
     "camera": MessageLookupByLibrary.simpleMessage("الكاميرا"),
     "cancel": MessageLookupByLibrary.simpleMessage("إلغاء"),
@@ -203,8 +235,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmResolveMessage": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد من أنك تريد وضع علامة على هذا التنبيه كمحلول؟",
     ),
+    "connectionErrorMessage": MessageLookupByLibrary.simpleMessage(
+      "تعذر الاتصال بالخادم.\nيرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.",
+    ),
+    "connectionErrorTitle": MessageLookupByLibrary.simpleMessage(
+      "خطأ في الاتصال",
+    ),
+    "connectionFailed": MessageLookupByLibrary.simpleMessage(
+      "فشل الاتصال. يرجى المحاولة مرة أخرى لاحقاً.",
+    ),
+    "contactUs": MessageLookupByLibrary.simpleMessage("تواصل معي"),
+    "contactUsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "أبلغ عن المشاكل أو تواصل مع الدعم عبر واتساب",
+    ),
     "copied": MessageLookupByLibrary.simpleMessage("تم النسخ!"),
     "copy": MessageLookupByLibrary.simpleMessage("نسخ"),
+    "country": MessageLookupByLibrary.simpleMessage("الدولة"),
     "create": MessageLookupByLibrary.simpleMessage("إنشاء"),
     "createGroup": MessageLookupByLibrary.simpleMessage("إنشاء مجموعة"),
     "createGroupDescription": MessageLookupByLibrary.simpleMessage(
@@ -218,6 +264,30 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "createService": MessageLookupByLibrary.simpleMessage("إنشاء خدمة"),
     "currency": MessageLookupByLibrary.simpleMessage("العملة"),
+    "currencyAmount": MessageLookupByLibrary.simpleMessage("المبلغ"),
+    "currencyAmountInvalid": MessageLookupByLibrary.simpleMessage(
+      "يرجى إدخال مبلغ صحيح",
+    ),
+    "currencyAmountPlaceholder": MessageLookupByLibrary.simpleMessage(
+      "أدخل المبلغ",
+    ),
+    "currencyAmountRequired": MessageLookupByLibrary.simpleMessage(
+      "يرجى إدخال المبلغ",
+    ),
+    "currencyConvert": MessageLookupByLibrary.simpleMessage("تحويل"),
+    "currencyConvertedAmount": MessageLookupByLibrary.simpleMessage(
+      "المبلغ المحول",
+    ),
+    "currencyConverter": MessageLookupByLibrary.simpleMessage("محول العملة"),
+    "currencyConverterSubtitle": MessageLookupByLibrary.simpleMessage(
+      "تحويل العملات فوراً",
+    ),
+    "currencyExchangeRate": MessageLookupByLibrary.simpleMessage(
+      "سعر الصرف الإرشادي",
+    ),
+    "currencyFrom": MessageLookupByLibrary.simpleMessage("من"),
+    "currencyRate": MessageLookupByLibrary.simpleMessage("السعر"),
+    "currencyTo": MessageLookupByLibrary.simpleMessage("إلى"),
     "darkMode": MessageLookupByLibrary.simpleMessage("الوضع الليلي"),
     "days": MessageLookupByLibrary.simpleMessage("أيام"),
     "delete": MessageLookupByLibrary.simpleMessage("حذف"),
@@ -232,6 +302,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "الوصف (اختياري)",
     ),
     "details": MessageLookupByLibrary.simpleMessage("التفاصيل"),
+    "digitalDirectory": MessageLookupByLibrary.simpleMessage("الدليل الرقمي"),
     "directions": MessageLookupByLibrary.simpleMessage("الاتجاهات"),
     "directionsDescription": MessageLookupByLibrary.simpleMessage(
       "احصل على الاتجاهات إلى موقع الطوارئ هذا باستخدام تطبيق الخرائط المفضل لديك",
@@ -256,7 +327,24 @@ class MessageLookup extends MessageLookupByLibrary {
     "emergencyAlerts": MessageLookupByLibrary.simpleMessage(
       "🚨 تنبيهات الطوارئ",
     ),
+    "emergencyAmbulance": MessageLookupByLibrary.simpleMessage("الإسعاف"),
+    "emergencyEmbassy": MessageLookupByLibrary.simpleMessage("السفارة"),
+    "emergencyError": MessageLookupByLibrary.simpleMessage(
+      "فشل تحميل أرقام الطوارئ",
+    ),
+    "emergencyErrorDescription": MessageLookupByLibrary.simpleMessage(
+      "يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى",
+    ),
+    "emergencyFire": MessageLookupByLibrary.simpleMessage("الإطفاء"),
     "emergencyLocation": MessageLookupByLibrary.simpleMessage("موقع الطوارئ"),
+    "emergencyNumbers": MessageLookupByLibrary.simpleMessage("أرقام الطوارئ"),
+    "emergencyPolice": MessageLookupByLibrary.simpleMessage("الشرطة"),
+    "emergencyQuickAccess": MessageLookupByLibrary.simpleMessage(
+      "اضغط لعرض جهات اتصال الطوارئ",
+    ),
+    "emergencySubtitle": MessageLookupByLibrary.simpleMessage(
+      "وصول سريع لخدمات الطوارئ",
+    ),
     "enable": MessageLookupByLibrary.simpleMessage("تفعيل"),
     "enableNotifications": MessageLookupByLibrary.simpleMessage(
       "تفعيل الإشعارات",
@@ -288,6 +376,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "errorUpdatingProfile": MessageLookupByLibrary.simpleMessage(
       "خطأ في تحديث الملف الشخصي",
     ),
+    "events": MessageLookupByLibrary.simpleMessage("الفعاليات"),
     "exclusiveRewards": MessageLookupByLibrary.simpleMessage(
       "أحصل علي مكافآت حصرية",
     ),
@@ -298,6 +387,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gallery": MessageLookupByLibrary.simpleMessage("المعرض"),
     "gender": MessageLookupByLibrary.simpleMessage("الجنس"),
     "general": MessageLookupByLibrary.simpleMessage("عام"),
+    "geographicDirectory": MessageLookupByLibrary.simpleMessage(
+      "الدليل الجغرافي",
+    ),
     "getDirections": MessageLookupByLibrary.simpleMessage(
       "الحصول على الاتجاهات",
     ),
@@ -376,11 +468,36 @@ class MessageLookup extends MessageLookupByLibrary {
     "noAlertsMessage": MessageLookupByLibrary.simpleMessage(
       "ممتاز! لا توجد تنبيهات طوارئ في الوقت الحالي.\nمجموعتك آمنة.",
     ),
+    "noAppsAvailable": MessageLookupByLibrary.simpleMessage(
+      "لا توجد تطبيقات متاحة",
+    ),
+    "noCategoriesAvailable": MessageLookupByLibrary.simpleMessage(
+      "لا توجد تصنيفات متاحة",
+    ),
     "noGroupsYet": MessageLookupByLibrary.simpleMessage("لا توجد مجموعات"),
     "noServicesYet": MessageLookupByLibrary.simpleMessage(
       "لا توجد خدمات حتى الآن",
     ),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
+    "onboardingDescription1": MessageLookupByLibrary.simpleMessage(
+      "كل ما تحتاجه في مكان واحد",
+    ),
+    "onboardingDescription2": MessageLookupByLibrary.simpleMessage(
+      "خطط رحلتك بسهولة مع حقيبة السفر الذكية، دليل الطوارئ، والفعاليات المحلية",
+    ),
+    "onboardingDescription3": MessageLookupByLibrary.simpleMessage(
+      "أكسب نقاط مع كل حجز واستبدلها بخصومات حصرية ومزايا فريدة",
+    ),
+    "onboardingNext": MessageLookupByLibrary.simpleMessage("التالي"),
+    "onboardingSkip": MessageLookupByLibrary.simpleMessage("تخطي"),
+    "onboardingStart": MessageLookupByLibrary.simpleMessage("أبدأ الاستكشاف"),
+    "onboardingTitle1": MessageLookupByLibrary.simpleMessage("خدمات الدليل"),
+    "onboardingTitle2": MessageLookupByLibrary.simpleMessage(
+      "أدوات السفر الذكية",
+    ),
+    "onboardingTitle3": MessageLookupByLibrary.simpleMessage(
+      "مكافآت ونقاط ولاء",
+    ),
     "openInMaps": MessageLookupByLibrary.simpleMessage("فتح في الخرائط"),
     "openRegister": MessageLookupByLibrary.simpleMessage("فتح السجل التجاري"),
     "optional": MessageLookupByLibrary.simpleMessage("اختياري"),
@@ -428,6 +545,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "readPrivacyPolicy": MessageLookupByLibrary.simpleMessage(
       "اقرأ سياسة الخصوصية الخاصة بنا",
     ),
+    "redeemSoon": MessageLookupByLibrary.simpleMessage("استبدل قريبًا"),
     "remaining": MessageLookupByLibrary.simpleMessage("متبقي"),
     "reminderAddButton": MessageLookupByLibrary.simpleMessage("حفظ التذكير"),
     "reminderAddTitle": MessageLookupByLibrary.simpleMessage("إضافة تذكير"),
@@ -486,6 +604,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "reminderUpdateSuccess": MessageLookupByLibrary.simpleMessage(
       "تم تحديث التذكير بنجاح.",
     ),
+    "reportIssue": MessageLookupByLibrary.simpleMessage("الإبلاغ عن مشكلة"),
+    "required": MessageLookupByLibrary.simpleMessage("مطلوب"),
     "resendCode": MessageLookupByLibrary.simpleMessage("إعادة الإرسال"),
     "resetPassword": MessageLookupByLibrary.simpleMessage(
       "إعادة تعيين كلمة المرور",
@@ -493,7 +613,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "resolveAlert": MessageLookupByLibrary.simpleMessage("حل التنبيه"),
     "resolved": MessageLookupByLibrary.simpleMessage("محلول"),
     "retry": MessageLookupByLibrary.simpleMessage("إعادة المحاولة"),
+    "retrying": MessageLookupByLibrary.simpleMessage("جاري إعادة المحاولة..."),
     "safetyRadius": MessageLookupByLibrary.simpleMessage("نطاق الأمان"),
+    "save": MessageLookupByLibrary.simpleMessage("حفظ"),
     "saving": MessageLookupByLibrary.simpleMessage("جاري الحفظ"),
     "scanQr": MessageLookupByLibrary.simpleMessage("مسح QR"),
     "scanQrCode": MessageLookupByLibrary.simpleMessage("مسح رمز QR"),
@@ -516,12 +638,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "serviceName": MessageLookupByLibrary.simpleMessage("اسم الخدمة"),
     "serviceType": MessageLookupByLibrary.simpleMessage("نوع الخدمة"),
     "settings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
+    "showPointsCard": MessageLookupByLibrary.simpleMessage("عرض بطاقة النقاط"),
     "signUp": MessageLookupByLibrary.simpleMessage("سجل الآن"),
     "sosAlert": MessageLookupByLibrary.simpleMessage("🚨 إشارة SOS - طوارئ"),
     "sosAlerts": MessageLookupByLibrary.simpleMessage("تنبيهات الطوارئ"),
     "sosEmergency": MessageLookupByLibrary.simpleMessage("طوارئ SOS"),
     "startNow": MessageLookupByLibrary.simpleMessage("ابدأ الان"),
     "status": MessageLookupByLibrary.simpleMessage("الحالة"),
+    "support": MessageLookupByLibrary.simpleMessage("الدعم الفني"),
     "tapToResolve": MessageLookupByLibrary.simpleMessage(
       "اضغط لحل هذا التنبيه",
     ),
@@ -536,6 +660,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "trips": MessageLookupByLibrary.simpleMessage("الرحلات"),
     "update": MessageLookupByLibrary.simpleMessage("تحديث"),
     "updateProfile": MessageLookupByLibrary.simpleMessage("تحديث الملف الشخصي"),
+    "vendorServices": MessageLookupByLibrary.simpleMessage("خدمات البائعين"),
     "verify": MessageLookupByLibrary.simpleMessage("تحقق"),
     "verifyMail": MessageLookupByLibrary.simpleMessage(
       "تحقق من البريد الالكتروني",
@@ -544,7 +669,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "لقد أرسلنا رمز تحقق مكوّن من 4 أرقام إلى بريدك الإلكتروني",
     ),
     "version": MessageLookupByLibrary.simpleMessage("الإصدار"),
+    "viewAll": MessageLookupByLibrary.simpleMessage("عرض الكل"),
     "viewOnMap": MessageLookupByLibrary.simpleMessage("عرض على الخريطة"),
+    "weightExceeded": MessageLookupByLibrary.simpleMessage(
+      "تم تجاوز الوزن المسموح",
+    ),
+    "weightExceededMessage": m4,
     "welcome": MessageLookupByLibrary.simpleMessage("مرحبًا!"),
     "welcomeLogin": MessageLookupByLibrary.simpleMessage(
       "مرحباً بعودتك إلي SEASON",
@@ -555,7 +685,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "welcomeText": MessageLookupByLibrary.simpleMessage(
       "رفيقك الشامل في كل رحلة",
     ),
+    "whatsappNotInstalled": MessageLookupByLibrary.simpleMessage(
+      "واتساب غير مثبت على جهازك",
+    ),
     "yes": MessageLookupByLibrary.simpleMessage("نعم"),
+    "yourLoyaltyPoints": MessageLookupByLibrary.simpleMessage(
+      "نقاط الولاء الخاصة بك",
+    ),
     "yourServices": MessageLookupByLibrary.simpleMessage("خدماتك"),
   };
 }

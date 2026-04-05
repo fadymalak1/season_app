@@ -10,6 +10,13 @@
     
     <!-- Foreground Service Permission -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    
+    <!-- Post Notifications Permission (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    
+    <!-- Wake Lock Permission (for notifications when device is sleeping) -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     
     <application
         android:label="Season"
@@ -70,6 +77,22 @@
             android:enabled="true"
             android:exported="false"
             tools:replace="android:exported" />
+        
+        <!-- Native Location Update Service -->
+        <service
+            android:name=".LocationUpdateService"
+            android:foregroundServiceType="location"
+            android:enabled="true"
+            android:exported="false" />
+        
+        <!-- Native Alarm Notification Service for FCM -->
+        <service
+            android:name=".AlarmNotificationService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
@@ -80,6 +103,15 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- Required for url_launcher to open URLs in external browser -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
         </intent>
     </queries>
 </manifest>

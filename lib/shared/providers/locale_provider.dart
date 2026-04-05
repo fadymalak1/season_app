@@ -6,18 +6,18 @@ final localeProvider =
 StateNotifierProvider<LocaleNotifier, Locale>((ref) => LocaleNotifier());
 
 class LocaleNotifier extends StateNotifier<Locale> {
-  LocaleNotifier() : super(const Locale('en')) {
+  LocaleNotifier() : super(const Locale('ar')) {
     _loadSavedLocale();
   }
 
   Future<void> _loadSavedLocale() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final langCode = prefs.getString('locale') ?? 'en';
+      final langCode = prefs.getString('locale') ?? 'ar';
       state = Locale(langCode);
     } catch (e) {
-      // If there's an error loading, default to English
-      state = const Locale('en');
+      // If there's an error loading, default to Arabic
+      state = const Locale('ar');
     }
   }
 

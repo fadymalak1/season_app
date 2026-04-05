@@ -118,7 +118,7 @@ final pinControllerProvider = Provider.autoDispose<TextEditingController>((ref) 
 });
 
 // OTP countdown timer
-final otpTimerProvider = StateProvider<int>((ref) => 300); // 5 minutes in seconds
+final otpTimerProvider = StateProvider<int>((ref) => 120); // 2 minutes in seconds
 final otpTimerRunningProvider = StateProvider<bool>((ref) => true);
 
 

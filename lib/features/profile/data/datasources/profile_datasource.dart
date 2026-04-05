@@ -18,7 +18,7 @@ class ProfileRemoteDataSource {
     required String name,
     String? nickname,
     required String email,
-    required String phone,
+    String? phone,
     String? birthDate,
     String? gender,
     int? avatarId,
@@ -27,16 +27,20 @@ class ProfileRemoteDataSource {
     // If photo file is provided, use multipart/form-data
     if (photoFile != null) {
       print('📸 Uploading photo file: ${photoFile.path}');
-      
-      FormData formData = FormData.fromMap({
+
+      final map = <String, dynamic>{
         'name': name,
         'nickname': nickname ?? '',
         'email': email,
-        'phone': phone,
         'birth_date': birthDate ?? '',
         'gender': gender ?? '',
         '_method': 'PUT',
-      });
+      };
+      if (phone != null && phone.isNotEmpty) {
+        map['phone'] = phone;
+      }
+
+      FormData formData = FormData.fromMap(map);
 
       // Add photo file with key 'photo_url'
       String fileName = photoFile.path.split('/').last;
@@ -67,15 +71,17 @@ class ProfileRemoteDataSource {
 
     // Otherwise, send regular JSON with avatar_id
     print('📝 Sending JSON without photo file');
-    final data = {
+    final data = <String, dynamic>{
       'name': name,
       'nickname': nickname ?? '',
       'email': email,
-      'phone': phone,
       'birth_date': birthDate ?? '',
       'gender': gender ?? '',
       '_method': 'PUT',
     };
+    if (phone != null && phone.isNotEmpty) {
+      data['phone'] = phone;
+    }
 
     // Only add avatar_id if it's provided
     if (avatarId != null) {

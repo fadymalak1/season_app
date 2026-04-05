@@ -3,9 +3,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:season_app/core/constants/app_colors.dart';
 import 'package:season_app/core/localization/generated/l10n.dart';
 import 'package:season_app/core/router/routes.dart';
+import 'package:season_app/core/services/auth_service.dart';
+import 'package:season_app/features/home/controllers/user_qr_controller.dart';
 import 'package:season_app/features/profile/providers.dart';
 import 'package:season_app/features/vendor/presentation/providers/vendor_providers.dart';
 import 'package:season_app/shared/widgets/custom_button.dart';
@@ -21,14 +24,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    // Load profile on init
-    Future.microtask(() => ref.read(profileControllerProvider.notifier).loadProfile());
+    Future.microtask(() {
+      if (!AuthService.isLoggedIn()) return;
+      ref.read(profileControllerProvider.notifier).loadProfile();
+      ref.read(userQrControllerProvider.notifier).loadUserQr();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
     final profileState = ref.watch(profileControllerProvider);
+    final userQrState = ref.watch(userQrControllerProvider);
     final vendorServicesAsync = ref.watch(vendorServicesProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isRTL = Directionality.of(context) == TextDirection.rtl;
@@ -38,6 +45,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       data: (services) => services.isNotEmpty,
       orElse: () => false,
     );
+
+    if (!AuthService.isLoggedIn()) {
+      return Scaffold(
+        backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  loc.profilePageContent,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 16),
+                ),
+                const SizedBox(height: 24),
+                CustomButton(
+                  text: loc.login,
+                  onPressed: () => context.go(Routes.login),
+                  color: AppColors.primary,
+                  textColor: AppColors.textLight,
+                  width: double.infinity,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
@@ -90,6 +126,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     AppColors.primary,
                                   ],
                                 ),
+                         
                               ),
                               child: SafeArea(
                                 bottom: false,
@@ -208,36 +245,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                           color: Colors.white,
                                         ),
                                       ),
-                                      if (profileState.profile?.nickname != null) ...[
-                                        const SizedBox(height: 3),
-                                        Text(
-                                          '@${profileState.profile!.nickname}',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.white.withOpacity(0.9),
-                                          ),
-                                        ),
-                                      ],
-                                      const SizedBox(height: 6),
-                                      // Email
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(
-                                            Icons.email_outlined,
-                                            color: Colors.white,
-                                            size: 14,
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Text(
-                                            profileState.profile?.email ?? '',
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              color: Colors.white.withOpacity(0.9),
+                                      const SizedBox(height: 16),
+                                      // Show Points Card Button
+                                      if (userQrState.userQr != null)
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              _showPointsCardBottomSheet(context, userQrState.userQr!, loc);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.white,
+                                              foregroundColor: AppColors.primary,
+                                              padding: const EdgeInsets.symmetric(vertical: 12),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              elevation: 2,
+                                            ),
+                                            child: Text(
+                                              loc.showPointsCard,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                fontFamily: 'Cairo',
+                                              ),
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -250,37 +285,63 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                       
+                                  
+                   
                                   const SizedBox(height: 16),
+                                  _buildInfoCard(
+                                    icon: Icons.email,
+                                    title: loc.email,
+                                    value: profileState.profile?.email ?? '',
+                                  ),
+                                  const SizedBox(height: 12),
                                   _buildPhoneCard(
                                     phone: profileState.profile?.phone ?? '',
                                     isRTL: isRTL,
                                     title: loc.phone,
                                   ),
-                                  const SizedBox(height: 12),
-                                  _buildInfoCard(
-                                    icon: Icons.cake,
-                                    title: loc.birthDate,
-                                    value: profileState.profile?.birthDate ?? loc.optional,
-                                  ),
-                                  const SizedBox(height: 12),
-                                  _buildInfoCard(
-                                    icon: Icons.person,
-                                    title: loc.gender,
-                                    value: profileState.profile?.gender != null
-                                        ? (profileState.profile!.gender == 'male' ? loc.male : loc.female)
-                                        : loc.optional,
-                                  ),
+                                  if (profileState.profile?.birthDate != null && profileState.profile!.birthDate!.isNotEmpty) ...[
+                                    const SizedBox(height: 12),
+                                    _buildInfoCard(
+                                      icon: Icons.cake,
+                                      title: loc.birthDate,
+                                      value: profileState.profile!.birthDate!,
+                                    ),
+                                  ],
+                                  if (profileState.profile?.gender != null && profileState.profile!.gender!.isNotEmpty) ...[
+                                    const SizedBox(height: 12),
+                                    _buildInfoCard(
+                                      icon: Icons.person,
+                                      title: loc.gender,
+                                      value: profileState.profile!.gender == 'male' ? loc.male : loc.female,
+                                    ),
+                                  ],
                            
                                   const SizedBox(height: 24),
 
-                                  CustomButton(
-                                    text: hasServices ? loc.myServices : loc.applyAsServiceProvider,
-                                    color: AppColors.secondary,
-                                    onPressed: () {
-                                      context.push(Routes.vendorServices);
-                                    },
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomButton(
+                                          text: hasServices ? loc.myServices : loc.applyAsServiceProvider,
+                                          color: AppColors.secondary,
+                                          onPressed: () {
+                                            context.push(Routes.vendorServices);
+                                          },
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: CustomButton(
+                                          text: loc.applyAsTrader,
+                                          color: AppColors.primary,
+                                          onPressed: () {
+                                            context.push(Routes.myGeographicalServices);
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
+                                  
                                   const SizedBox(height: 16),
 
                                 
@@ -291,6 +352,53 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                       ),
                     ),
+    );
+  }
+
+  void _showPointsCardBottomSheet(BuildContext context, userQr, AppLocalizations loc) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).brightness == Brightness.dark 
+              ? AppColors.backgroundDark 
+              : AppColors.backgroundLight,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Drag handle
+                  Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  // Card Widget
+                  _buildCardWidget(userQr, loc),
+                  const SizedBox(height: 24),
+                  // Info Section
+                  _buildInfoSection(loc),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -445,6 +553,260 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCardWidget(userQr, AppLocalizations l10n) {
+    return Container(
+      width: double.infinity,
+      height: 200,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          alignment: Alignment.topLeft,
+          children: [
+            // Background Image
+            Positioned.fill(
+              child: Image.asset(
+                'assets/images/png/card_background.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+            // Gradient overlay for better text readability
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.3),
+                      Colors.black.withOpacity(0.1),
+                      Colors.black.withOpacity(0.4),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            
+            // Card Content
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // User Name
+                  Text(
+                    userQr.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Cairo',
+                      shadows: [
+                        Shadow(
+                          offset: Offset(1, 1),
+                          blurRadius: 3,
+                          color: Colors.black54,
+                        ),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
+               
+                  // QR Code
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: QrImageView(
+                        data: userQr.qrCodeUrl,
+                        version: QrVersions.auto,
+                        size: 80.0,
+                        foregroundColor: AppColors.primary,
+                        backgroundColor: Colors.white,
+                      ),
+                  ),
+                  const SizedBox(height: 8),
+                  // Loyalty Points
+                  Text(
+                    l10n.loyaltyPoints,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Cairo',
+                      shadows: [
+                        Shadow(
+                          offset: Offset(1, 1),
+                          blurRadius: 2,
+                          color: Colors.black54,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    '${userQr.coins} ${l10n.points}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Cairo',
+                      shadows: [
+                        Shadow(
+                          offset: Offset(1, 1),
+                          blurRadius: 2,
+                          color: Colors.black54,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoSection(AppLocalizations l10n) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Header
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.primary,
+                  AppColors.primary,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.info_outline,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    l10n.howToUseCard,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Cairo',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              children: [
+                _buildInfoItem(
+                  icon: Icons.stars,
+                  title: l10n.collectPoints,
+                  color: Colors.orange,
+                ),
+                const SizedBox(height: 16),
+                _buildInfoItem(
+                  icon: Icons.card_giftcard,
+                  title: l10n.exclusiveRewards,
+                  color: Colors.purple,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoItem({
+    required IconData icon,
+    required String title,
+    required Color color,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Icon(
+            icon,
+            color: color,
+            size: 18,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+              fontFamily: 'Cairo',
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

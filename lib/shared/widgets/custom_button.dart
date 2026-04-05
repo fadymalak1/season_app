@@ -39,9 +39,15 @@ class CustomButton extends StatelessWidget {
           height: 22,
           child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
         )
-            : Text(
-          text,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: textColor ?? Colors.white),
+            : FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            text,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: textColor ?? Colors.white),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ),
     );

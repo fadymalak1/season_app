@@ -519,6 +519,16 @@ class AppLocalizations {
     );
   }
 
+  /// `Apply as Trader`
+  String get applyAsTrader {
+    return Intl.message(
+      'Apply as Trader',
+      name: 'applyAsTrader',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Profile updated successfully`
   String get profileUpdatedSuccessfully {
     return Intl.message(
@@ -2174,6 +2184,106 @@ class AppLocalizations {
     );
   }
 
+  /// `Edit Max Weight`
+  String get bagEditMaxWeight {
+    return Intl.message(
+      'Edit Max Weight',
+      name: 'bagEditMaxWeight',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Max Weight`
+  String get bagMaxWeightLabel {
+    return Intl.message(
+      'Max Weight',
+      name: 'bagMaxWeightLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter max weight`
+  String get bagMaxWeightPlaceholder {
+    return Intl.message(
+      'Enter max weight',
+      name: 'bagMaxWeightPlaceholder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Max weight is required`
+  String get bagMaxWeightRequired {
+    return Intl.message(
+      'Max weight is required',
+      name: 'bagMaxWeightRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid weight`
+  String get bagMaxWeightInvalid {
+    return Intl.message(
+      'Please enter a valid weight',
+      name: 'bagMaxWeightInvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight Unit`
+  String get bagWeightUnitLabel {
+    return Intl.message(
+      'Weight Unit',
+      name: 'bagWeightUnitLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select weight unit`
+  String get bagSelectWeightUnit {
+    return Intl.message(
+      'Select weight unit',
+      name: 'bagSelectWeightUnit',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Max weight updated successfully`
+  String get bagMaxWeightUpdated {
+    return Intl.message(
+      'Max weight updated successfully',
+      name: 'bagMaxWeightUpdated',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `kg`
+  String get bagWeightUnitKg {
+    return Intl.message('kg', name: 'bagWeightUnitKg', desc: '', args: []);
+  }
+
+  /// `Adjust the maximum weight limit for your bag. The weight is always measured in kilograms.`
+  String get bagMaxWeightInfo {
+    return Intl.message(
+      'Adjust the maximum weight limit for your bag. The weight is always measured in kilograms.',
+      name: 'bagMaxWeightInfo',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save`
+  String get save {
+    return Intl.message('Save', name: 'save', desc: '', args: []);
+  }
+
   /// `We couldn't refresh reminders. Please try again.`
   String get reminderLoadError {
     return Intl.message(
@@ -2449,6 +2559,475 @@ class AppLocalizations {
     return Intl.message(
       'Use camera',
       name: 'imagePickerCamera',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Emergency Numbers`
+  String get emergencyNumbers {
+    return Intl.message(
+      'Emergency Numbers',
+      name: 'emergencyNumbers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Quick access to emergency services`
+  String get emergencySubtitle {
+    return Intl.message(
+      'Quick access to emergency services',
+      name: 'emergencySubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Fire Department`
+  String get emergencyFire {
+    return Intl.message(
+      'Fire Department',
+      name: 'emergencyFire',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Police`
+  String get emergencyPolice {
+    return Intl.message('Police', name: 'emergencyPolice', desc: '', args: []);
+  }
+
+  /// `Ambulance`
+  String get emergencyAmbulance {
+    return Intl.message(
+      'Ambulance',
+      name: 'emergencyAmbulance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Embassy`
+  String get emergencyEmbassy {
+    return Intl.message(
+      'Embassy',
+      name: 'emergencyEmbassy',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Failed to load emergency numbers`
+  String get emergencyError {
+    return Intl.message(
+      'Failed to load emergency numbers',
+      name: 'emergencyError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please check your internet connection and try again`
+  String get emergencyErrorDescription {
+    return Intl.message(
+      'Please check your internet connection and try again',
+      name: 'emergencyErrorDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap to view emergency contacts`
+  String get emergencyQuickAccess {
+    return Intl.message(
+      'Tap to view emergency contacts',
+      name: 'emergencyQuickAccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Country`
+  String get country {
+    return Intl.message('Country', name: 'country', desc: '', args: []);
+  }
+
+  /// `Required`
+  String get required {
+    return Intl.message('Required', name: 'required', desc: '', args: []);
+  }
+
+  /// `Currency Converter`
+  String get currencyConverter {
+    return Intl.message(
+      'Currency Converter',
+      name: 'currencyConverter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Convert currencies instantly`
+  String get currencyConverterSubtitle {
+    return Intl.message(
+      'Convert currencies instantly',
+      name: 'currencyConverterSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `From`
+  String get currencyFrom {
+    return Intl.message('From', name: 'currencyFrom', desc: '', args: []);
+  }
+
+  /// `To`
+  String get currencyTo {
+    return Intl.message('To', name: 'currencyTo', desc: '', args: []);
+  }
+
+  /// `Amount`
+  String get currencyAmount {
+    return Intl.message('Amount', name: 'currencyAmount', desc: '', args: []);
+  }
+
+  /// `Enter amount`
+  String get currencyAmountPlaceholder {
+    return Intl.message(
+      'Enter amount',
+      name: 'currencyAmountPlaceholder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter an amount`
+  String get currencyAmountRequired {
+    return Intl.message(
+      'Please enter an amount',
+      name: 'currencyAmountRequired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid amount`
+  String get currencyAmountInvalid {
+    return Intl.message(
+      'Please enter a valid amount',
+      name: 'currencyAmountInvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Convert`
+  String get currencyConvert {
+    return Intl.message('Convert', name: 'currencyConvert', desc: '', args: []);
+  }
+
+  /// `Rate`
+  String get currencyRate {
+    return Intl.message('Rate', name: 'currencyRate', desc: '', args: []);
+  }
+
+  /// `Converted Amount`
+  String get currencyConvertedAmount {
+    return Intl.message(
+      'Converted Amount',
+      name: 'currencyConvertedAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Indicative Exchange Rate`
+  String get currencyExchangeRate {
+    return Intl.message(
+      'Indicative Exchange Rate',
+      name: 'currencyExchangeRate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Vendor Services`
+  String get vendorServices {
+    return Intl.message(
+      'Vendor Services',
+      name: 'vendorServices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `View All`
+  String get viewAll {
+    return Intl.message('View All', name: 'viewAll', desc: '', args: []);
+  }
+
+  /// `Digital Directory`
+  String get digitalDirectory {
+    return Intl.message(
+      'Digital Directory',
+      name: 'digitalDirectory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Geographic Directory`
+  String get geographicDirectory {
+    return Intl.message(
+      'Geographic Directory',
+      name: 'geographicDirectory',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No categories available`
+  String get noCategoriesAvailable {
+    return Intl.message(
+      'No categories available',
+      name: 'noCategoriesAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No apps available`
+  String get noAppsAvailable {
+    return Intl.message(
+      'No apps available',
+      name: 'noAppsAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Events`
+  String get events {
+    return Intl.message('Events', name: 'events', desc: '', args: []);
+  }
+
+  /// `Your Loyalty Points`
+  String get yourLoyaltyPoints {
+    return Intl.message(
+      'Your Loyalty Points',
+      name: 'yourLoyaltyPoints',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `available points`
+  String get availablePoints {
+    return Intl.message(
+      'available points',
+      name: 'availablePoints',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Redeem Soon`
+  String get redeemSoon {
+    return Intl.message('Redeem Soon', name: 'redeemSoon', desc: '', args: []);
+  }
+
+  /// `Show Points Card`
+  String get showPointsCard {
+    return Intl.message(
+      'Show Points Card',
+      name: 'showPointsCard',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Skip`
+  String get onboardingSkip {
+    return Intl.message('Skip', name: 'onboardingSkip', desc: '', args: []);
+  }
+
+  /// `Next`
+  String get onboardingNext {
+    return Intl.message('Next', name: 'onboardingNext', desc: '', args: []);
+  }
+
+  /// `Start Exploring`
+  String get onboardingStart {
+    return Intl.message(
+      'Start Exploring',
+      name: 'onboardingStart',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Directory Services`
+  String get onboardingTitle1 {
+    return Intl.message(
+      'Directory Services',
+      name: 'onboardingTitle1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Everything you need in one place`
+  String get onboardingDescription1 {
+    return Intl.message(
+      'Everything you need in one place',
+      name: 'onboardingDescription1',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Smart Travel Tools`
+  String get onboardingTitle2 {
+    return Intl.message(
+      'Smart Travel Tools',
+      name: 'onboardingTitle2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Plan your trip easily with smart travel bag, emergency guide, and local events`
+  String get onboardingDescription2 {
+    return Intl.message(
+      'Plan your trip easily with smart travel bag, emergency guide, and local events',
+      name: 'onboardingDescription2',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Rewards and Loyalty Points`
+  String get onboardingTitle3 {
+    return Intl.message(
+      'Rewards and Loyalty Points',
+      name: 'onboardingTitle3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Earn points with every booking and redeem them for exclusive discounts and unique benefits`
+  String get onboardingDescription3 {
+    return Intl.message(
+      'Earn points with every booking and redeem them for exclusive discounts and unique benefits',
+      name: 'onboardingDescription3',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Connection Error`
+  String get connectionErrorTitle {
+    return Intl.message(
+      'Connection Error',
+      name: 'connectionErrorTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unable to establish connection with server.\nPlease check your internet connection and try again.`
+  String get connectionErrorMessage {
+    return Intl.message(
+      'Unable to establish connection with server.\nPlease check your internet connection and try again.',
+      name: 'connectionErrorMessage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Retrying...`
+  String get retrying {
+    return Intl.message('Retrying...', name: 'retrying', desc: '', args: []);
+  }
+
+  /// `Back to Home`
+  String get backToHome {
+    return Intl.message('Back to Home', name: 'backToHome', desc: '', args: []);
+  }
+
+  /// `Connection failed. Please try again later.`
+  String get connectionFailed {
+    return Intl.message(
+      'Connection failed. Please try again later.',
+      name: 'connectionFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weight Exceeded`
+  String get weightExceeded {
+    return Intl.message(
+      'Weight Exceeded',
+      name: 'weightExceeded',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The total weight will exceed the maximum allowed weight ({maxWeight} kg). Current weight: {currentWeight} kg. Item weight: {itemWeight} kg.`
+  String weightExceededMessage(
+    String maxWeight,
+    String currentWeight,
+    String itemWeight,
+  ) {
+    return Intl.message(
+      'The total weight will exceed the maximum allowed weight ($maxWeight kg). Current weight: $currentWeight kg. Item weight: $itemWeight kg.',
+      name: 'weightExceededMessage',
+      desc: '',
+      args: [maxWeight, currentWeight, itemWeight],
+    );
+  }
+
+  /// `Support`
+  String get support {
+    return Intl.message('Support', name: 'support', desc: '', args: []);
+  }
+
+  /// `Contact Us`
+  String get contactUs {
+    return Intl.message('Contact Us', name: 'contactUs', desc: '', args: []);
+  }
+
+  /// `Report an Issue`
+  String get reportIssue {
+    return Intl.message(
+      'Report an Issue',
+      name: 'reportIssue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Report problems or contact support via WhatsApp`
+  String get contactUsSubtitle {
+    return Intl.message(
+      'Report problems or contact support via WhatsApp',
+      name: 'contactUsSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `WhatsApp is not installed on your device`
+  String get whatsappNotInstalled {
+    return Intl.message(
+      'WhatsApp is not installed on your device',
+      name: 'whatsappNotInstalled',
       desc: '',
       args: [],
     );

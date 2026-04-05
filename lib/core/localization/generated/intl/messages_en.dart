@@ -28,6 +28,9 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m3(userName) => "Hello ${userName}!";
 
+  static String m4(maxWeight, currentWeight, itemWeight) =>
+      "The total weight will exceed the maximum allowed weight (${maxWeight} kg). Current weight: ${currentWeight} kg. Item weight: ${itemWeight} kg.";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "about": MessageLookupByLibrary.simpleMessage("About"),
@@ -55,6 +58,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "applyAsServiceProvider": MessageLookupByLibrary.simpleMessage(
       "Apply as Service Provider",
     ),
+    "applyAsTrader": MessageLookupByLibrary.simpleMessage("Apply as Trader"),
     "arabic": MessageLookupByLibrary.simpleMessage("Arabic"),
     "areYouSureDelete": MessageLookupByLibrary.simpleMessage("Delete service?"),
     "areYouSureDeleteMessage": MessageLookupByLibrary.simpleMessage(
@@ -63,6 +67,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "askForCode": MessageLookupByLibrary.simpleMessage(
       "Or ask for code from group owner",
     ),
+    "availablePoints": MessageLookupByLibrary.simpleMessage("available points"),
+    "backToHome": MessageLookupByLibrary.simpleMessage("Back to Home"),
     "bag": MessageLookupByLibrary.simpleMessage("Bag"),
     "bagAISuggestionsButton": MessageLookupByLibrary.simpleMessage(
       "AI suggestions",
@@ -102,6 +108,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "bagDeleteSuccess": MessageLookupByLibrary.simpleMessage(
       "Reminder deleted successfully.",
     ),
+    "bagEditMaxWeight": MessageLookupByLibrary.simpleMessage("Edit Max Weight"),
     "bagEmptyDescription": MessageLookupByLibrary.simpleMessage(
       "Start adding your essentials to get travel-ready.",
     ),
@@ -114,6 +121,22 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "bagItemsTitle": MessageLookupByLibrary.simpleMessage("Suggested items"),
     "bagLoadingItems": MessageLookupByLibrary.simpleMessage("Loading items..."),
+    "bagMaxWeightInfo": MessageLookupByLibrary.simpleMessage(
+      "Adjust the maximum weight limit for your bag. The weight is always measured in kilograms.",
+    ),
+    "bagMaxWeightInvalid": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid weight",
+    ),
+    "bagMaxWeightLabel": MessageLookupByLibrary.simpleMessage("Max Weight"),
+    "bagMaxWeightPlaceholder": MessageLookupByLibrary.simpleMessage(
+      "Enter max weight",
+    ),
+    "bagMaxWeightRequired": MessageLookupByLibrary.simpleMessage(
+      "Max weight is required",
+    ),
+    "bagMaxWeightUpdated": MessageLookupByLibrary.simpleMessage(
+      "Max weight updated successfully",
+    ),
     "bagNoCategories": MessageLookupByLibrary.simpleMessage(
       "No categories available yet.",
     ),
@@ -140,6 +163,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "bagSelectItemPlaceholder": MessageLookupByLibrary.simpleMessage(
       "Select item",
     ),
+    "bagSelectWeightUnit": MessageLookupByLibrary.simpleMessage(
+      "Select weight unit",
+    ),
     "bagSubtitle": MessageLookupByLibrary.simpleMessage("Main checked luggage"),
     "bagTip1": MessageLookupByLibrary.simpleMessage(
       "Place heavier items at the bottom of your bag.",
@@ -164,6 +190,8 @@ class MessageLookup extends MessageLookupByLibrary {
       "Quantity updated successfully.",
     ),
     "bagWeight": m2,
+    "bagWeightUnitKg": MessageLookupByLibrary.simpleMessage("kg"),
+    "bagWeightUnitLabel": MessageLookupByLibrary.simpleMessage("Weight Unit"),
     "birthDate": MessageLookupByLibrary.simpleMessage("Birth Date"),
     "camera": MessageLookupByLibrary.simpleMessage("Camera"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
@@ -195,8 +223,22 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmResolveMessage": MessageLookupByLibrary.simpleMessage(
       "Are you sure you want to mark this alert as resolved?",
     ),
+    "connectionErrorMessage": MessageLookupByLibrary.simpleMessage(
+      "Unable to establish connection with server.\nPlease check your internet connection and try again.",
+    ),
+    "connectionErrorTitle": MessageLookupByLibrary.simpleMessage(
+      "Connection Error",
+    ),
+    "connectionFailed": MessageLookupByLibrary.simpleMessage(
+      "Connection failed. Please try again later.",
+    ),
+    "contactUs": MessageLookupByLibrary.simpleMessage("Contact Us"),
+    "contactUsSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Report problems or contact support via WhatsApp",
+    ),
     "copied": MessageLookupByLibrary.simpleMessage("Copied!"),
     "copy": MessageLookupByLibrary.simpleMessage("Copy"),
+    "country": MessageLookupByLibrary.simpleMessage("Country"),
     "create": MessageLookupByLibrary.simpleMessage("Create"),
     "createGroup": MessageLookupByLibrary.simpleMessage("Create Group"),
     "createGroupDescription": MessageLookupByLibrary.simpleMessage(
@@ -210,6 +252,32 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "createService": MessageLookupByLibrary.simpleMessage("Create a service"),
     "currency": MessageLookupByLibrary.simpleMessage("Currency"),
+    "currencyAmount": MessageLookupByLibrary.simpleMessage("Amount"),
+    "currencyAmountInvalid": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid amount",
+    ),
+    "currencyAmountPlaceholder": MessageLookupByLibrary.simpleMessage(
+      "Enter amount",
+    ),
+    "currencyAmountRequired": MessageLookupByLibrary.simpleMessage(
+      "Please enter an amount",
+    ),
+    "currencyConvert": MessageLookupByLibrary.simpleMessage("Convert"),
+    "currencyConvertedAmount": MessageLookupByLibrary.simpleMessage(
+      "Converted Amount",
+    ),
+    "currencyConverter": MessageLookupByLibrary.simpleMessage(
+      "Currency Converter",
+    ),
+    "currencyConverterSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Convert currencies instantly",
+    ),
+    "currencyExchangeRate": MessageLookupByLibrary.simpleMessage(
+      "Indicative Exchange Rate",
+    ),
+    "currencyFrom": MessageLookupByLibrary.simpleMessage("From"),
+    "currencyRate": MessageLookupByLibrary.simpleMessage("Rate"),
+    "currencyTo": MessageLookupByLibrary.simpleMessage("To"),
     "darkMode": MessageLookupByLibrary.simpleMessage("Dark Mode"),
     "days": MessageLookupByLibrary.simpleMessage("days"),
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
@@ -226,6 +294,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Description (Optional)",
     ),
     "details": MessageLookupByLibrary.simpleMessage("Details"),
+    "digitalDirectory": MessageLookupByLibrary.simpleMessage(
+      "Digital Directory",
+    ),
     "directions": MessageLookupByLibrary.simpleMessage("Directions"),
     "directionsDescription": MessageLookupByLibrary.simpleMessage(
       "Get directions to this emergency location using your preferred maps app",
@@ -252,8 +323,27 @@ class MessageLookup extends MessageLookupByLibrary {
     "emergencyAlerts": MessageLookupByLibrary.simpleMessage(
       "🚨 Emergency Alerts",
     ),
+    "emergencyAmbulance": MessageLookupByLibrary.simpleMessage("Ambulance"),
+    "emergencyEmbassy": MessageLookupByLibrary.simpleMessage("Embassy"),
+    "emergencyError": MessageLookupByLibrary.simpleMessage(
+      "Failed to load emergency numbers",
+    ),
+    "emergencyErrorDescription": MessageLookupByLibrary.simpleMessage(
+      "Please check your internet connection and try again",
+    ),
+    "emergencyFire": MessageLookupByLibrary.simpleMessage("Fire Department"),
     "emergencyLocation": MessageLookupByLibrary.simpleMessage(
       "Emergency Location",
+    ),
+    "emergencyNumbers": MessageLookupByLibrary.simpleMessage(
+      "Emergency Numbers",
+    ),
+    "emergencyPolice": MessageLookupByLibrary.simpleMessage("Police"),
+    "emergencyQuickAccess": MessageLookupByLibrary.simpleMessage(
+      "Tap to view emergency contacts",
+    ),
+    "emergencySubtitle": MessageLookupByLibrary.simpleMessage(
+      "Quick access to emergency services",
     ),
     "enable": MessageLookupByLibrary.simpleMessage("Enable"),
     "enableNotifications": MessageLookupByLibrary.simpleMessage(
@@ -286,6 +376,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "errorUpdatingProfile": MessageLookupByLibrary.simpleMessage(
       "Error updating profile",
     ),
+    "events": MessageLookupByLibrary.simpleMessage("Events"),
     "exclusiveRewards": MessageLookupByLibrary.simpleMessage(
       "Get exclusive rewards",
     ),
@@ -296,6 +387,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "gallery": MessageLookupByLibrary.simpleMessage("Gallery"),
     "gender": MessageLookupByLibrary.simpleMessage("Gender"),
     "general": MessageLookupByLibrary.simpleMessage("General"),
+    "geographicDirectory": MessageLookupByLibrary.simpleMessage(
+      "Geographic Directory",
+    ),
     "getDirections": MessageLookupByLibrary.simpleMessage("Get Directions"),
     "getInstantAlerts": MessageLookupByLibrary.simpleMessage(
       "Get instant alerts",
@@ -368,11 +462,38 @@ class MessageLookup extends MessageLookupByLibrary {
     "noAlertsMessage": MessageLookupByLibrary.simpleMessage(
       "Great! No emergency alerts at the moment.\nYour group is safe.",
     ),
+    "noAppsAvailable": MessageLookupByLibrary.simpleMessage(
+      "No apps available",
+    ),
+    "noCategoriesAvailable": MessageLookupByLibrary.simpleMessage(
+      "No categories available",
+    ),
     "noGroupsYet": MessageLookupByLibrary.simpleMessage("No Groups Yet"),
     "noServicesYet": MessageLookupByLibrary.simpleMessage(
       "You have no services yet",
     ),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
+    "onboardingDescription1": MessageLookupByLibrary.simpleMessage(
+      "Everything you need in one place",
+    ),
+    "onboardingDescription2": MessageLookupByLibrary.simpleMessage(
+      "Plan your trip easily with smart travel bag, emergency guide, and local events",
+    ),
+    "onboardingDescription3": MessageLookupByLibrary.simpleMessage(
+      "Earn points with every booking and redeem them for exclusive discounts and unique benefits",
+    ),
+    "onboardingNext": MessageLookupByLibrary.simpleMessage("Next"),
+    "onboardingSkip": MessageLookupByLibrary.simpleMessage("Skip"),
+    "onboardingStart": MessageLookupByLibrary.simpleMessage("Start Exploring"),
+    "onboardingTitle1": MessageLookupByLibrary.simpleMessage(
+      "Directory Services",
+    ),
+    "onboardingTitle2": MessageLookupByLibrary.simpleMessage(
+      "Smart Travel Tools",
+    ),
+    "onboardingTitle3": MessageLookupByLibrary.simpleMessage(
+      "Rewards and Loyalty Points",
+    ),
     "openInMaps": MessageLookupByLibrary.simpleMessage("Open in Maps"),
     "openRegister": MessageLookupByLibrary.simpleMessage(
       "Open commercial register",
@@ -422,6 +543,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "readPrivacyPolicy": MessageLookupByLibrary.simpleMessage(
       "Read our privacy policy",
     ),
+    "redeemSoon": MessageLookupByLibrary.simpleMessage("Redeem Soon"),
     "remaining": MessageLookupByLibrary.simpleMessage("remaining"),
     "reminderAddButton": MessageLookupByLibrary.simpleMessage("Save reminder"),
     "reminderAddTitle": MessageLookupByLibrary.simpleMessage("Add reminder"),
@@ -486,12 +608,16 @@ class MessageLookup extends MessageLookupByLibrary {
     "reminderUpdateSuccess": MessageLookupByLibrary.simpleMessage(
       "Reminder updated successfully.",
     ),
+    "reportIssue": MessageLookupByLibrary.simpleMessage("Report an Issue"),
+    "required": MessageLookupByLibrary.simpleMessage("Required"),
     "resendCode": MessageLookupByLibrary.simpleMessage("Resend Code"),
     "resetPassword": MessageLookupByLibrary.simpleMessage("Reset Password"),
     "resolveAlert": MessageLookupByLibrary.simpleMessage("Resolve Alert"),
     "resolved": MessageLookupByLibrary.simpleMessage("Resolved"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
+    "retrying": MessageLookupByLibrary.simpleMessage("Retrying..."),
     "safetyRadius": MessageLookupByLibrary.simpleMessage("Safety Radius"),
+    "save": MessageLookupByLibrary.simpleMessage("Save"),
     "saving": MessageLookupByLibrary.simpleMessage("Saving"),
     "scanQr": MessageLookupByLibrary.simpleMessage("Scan QR"),
     "scanQrCode": MessageLookupByLibrary.simpleMessage("Scan QR Code"),
@@ -512,12 +638,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "serviceName": MessageLookupByLibrary.simpleMessage("Service name"),
     "serviceType": MessageLookupByLibrary.simpleMessage("Service Type"),
     "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+    "showPointsCard": MessageLookupByLibrary.simpleMessage("Show Points Card"),
     "signUp": MessageLookupByLibrary.simpleMessage("Sign Up"),
     "sosAlert": MessageLookupByLibrary.simpleMessage("🚨 SOS Alert!"),
     "sosAlerts": MessageLookupByLibrary.simpleMessage("SOS Alerts"),
     "sosEmergency": MessageLookupByLibrary.simpleMessage("SOS Emergency"),
     "startNow": MessageLookupByLibrary.simpleMessage("Start Now"),
     "status": MessageLookupByLibrary.simpleMessage("Status"),
+    "support": MessageLookupByLibrary.simpleMessage("Support"),
     "tapToResolve": MessageLookupByLibrary.simpleMessage(
       "Tap to resolve this alert",
     ),
@@ -532,13 +660,17 @@ class MessageLookup extends MessageLookupByLibrary {
     "trips": MessageLookupByLibrary.simpleMessage("Trips"),
     "update": MessageLookupByLibrary.simpleMessage("Update"),
     "updateProfile": MessageLookupByLibrary.simpleMessage("Update Profile"),
+    "vendorServices": MessageLookupByLibrary.simpleMessage("Vendor Services"),
     "verify": MessageLookupByLibrary.simpleMessage("Verify"),
     "verifyMail": MessageLookupByLibrary.simpleMessage("Verify Mail"),
     "verifyMailBody": MessageLookupByLibrary.simpleMessage(
       "We have sent a verification code to your email",
     ),
     "version": MessageLookupByLibrary.simpleMessage("Version"),
+    "viewAll": MessageLookupByLibrary.simpleMessage("View All"),
     "viewOnMap": MessageLookupByLibrary.simpleMessage("View on Map"),
+    "weightExceeded": MessageLookupByLibrary.simpleMessage("Weight Exceeded"),
+    "weightExceededMessage": m4,
     "welcome": MessageLookupByLibrary.simpleMessage("Welcome!"),
     "welcomeLogin": MessageLookupByLibrary.simpleMessage(
       "Welcome back to SEASON",
@@ -549,7 +681,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "welcomeText": MessageLookupByLibrary.simpleMessage(
       "Your comprehensive companion for every journey",
     ),
+    "whatsappNotInstalled": MessageLookupByLibrary.simpleMessage(
+      "WhatsApp is not installed on your device",
+    ),
     "yes": MessageLookupByLibrary.simpleMessage("Yes"),
+    "yourLoyaltyPoints": MessageLookupByLibrary.simpleMessage(
+      "Your Loyalty Points",
+    ),
     "yourServices": MessageLookupByLibrary.simpleMessage("Your services"),
   };
 }

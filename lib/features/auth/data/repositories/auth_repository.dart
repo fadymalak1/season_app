@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:season_app/core/services/auth_service.dart';
 import 'package:season_app/core/services/dio_client.dart';
+import 'package:season_app/core/services/background_location_service.dart';
 import 'package:season_app/features/auth/data/datasources/auth_datasource.dart';
 
 class AuthRepository {
@@ -96,6 +97,15 @@ class AuthRepository {
           // Set token in DioHelper immediately
           DioHelper.instance.setAccessToken(token.toString());
           print('✅ Token saved and set in DioHelper');
+          
+          // Fetch and store group IDs for background location tracking
+          // This ensures group IDs are available even when app is terminated
+          try {
+            await startBackgroundLocationTracking();
+            print('✅ Background location tracking started after login');
+          } catch (e) {
+            print('⚠️ Error starting background location tracking after login: $e');
+          }
         } else {
           print('⚠️ No token in login response - might require OTP verification');
         }
@@ -168,6 +178,15 @@ class AuthRepository {
           // Set token in DioHelper immediately
           DioHelper.instance.setAccessToken(token.toString());
           print('✅ Token saved and set in DioHelper');
+          
+          // Fetch and store group IDs for background location tracking
+          // This ensures group IDs are available even when app is terminated
+          try {
+            await startBackgroundLocationTracking();
+            print('✅ Background location tracking started after OTP verification');
+          } catch (e) {
+            print('⚠️ Error starting background location tracking after OTP: $e');
+          }
         } else {
           print('⚠️ No token found in OTP verification response');
         }
@@ -312,5 +331,291 @@ class AuthRepository {
     await AuthService.logout();
     // Clear token from DioHelper
     DioHelper.instance.clearTokens();
+  }
+
+  /// Login with Google
+  Future<String> loginWithGoogle({
+    required String idToken,
+    required String accessToken,
+    String? notificationToken,
+  }) async {
+    try {
+      final response = await remoteDataSource.loginWithGoogle(
+        idToken: idToken,
+        accessToken: accessToken,
+        notificationToken: notificationToken,
+      );
+
+      if (response.statusCode == 200) {
+        // Extract token and user data
+        dynamic token;
+        dynamic userId;
+        String? email;
+
+        if (response.data is Map) {
+          token = response.data['data']?['token'] ??
+              response.data['token'] ??
+              response.data['data']?['access_token'] ??
+              response.data['access_token'];
+
+          userId = response.data['data']?['user']?['id']?.toString() ??
+              response.data['user']?['id']?.toString() ??
+              response.data['data']?['userInfo']?['id']?.toString() ??
+              response.data['userInfo']?['id']?.toString();
+
+          email = response.data['data']?['user']?['email'] ??
+              response.data['user']?['email'] ??
+              response.data['data']?['userInfo']?['email'] ??
+              response.data['userInfo']?['email'];
+        }
+
+        if (token != null && token.toString().isNotEmpty) {
+          await AuthService.saveAuthData(
+            token: token.toString(),
+            userId: userId,
+            email: email,
+          );
+
+          DioHelper.instance.setAccessToken(token.toString());
+
+          try {
+            await startBackgroundLocationTracking();
+          } catch (e) {
+            print('⚠️ Error starting background location tracking: $e');
+          }
+        }
+
+        return response.data["message"] ?? "Login successful.";
+      } else {
+        throw Exception(response.data["message"] ?? "Google login failed");
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        // User not found - this is expected for new users
+        final message = e.response?.data['message'] ?? 'User not found. Please register first.';
+        throw Exception('404: $message'); // Prefix with 404 for easier detection
+      } else if (e.response?.statusCode == 401) {
+        final message = e.response?.data['message'] ?? 'Invalid Google credentials';
+        throw Exception(message);
+      } else if (e.response?.statusCode == 400) {
+        final message = e.response?.data['message'] ?? 'Google login failed';
+        throw Exception(message);
+      } else {
+        throw Exception('حدث خطأ أثناء تسجيل الدخول باستخدام Google');
+      }
+    }
+  }
+
+  /// Register with Google
+  Future<String> registerWithGoogle({
+    required String idToken,
+    required String accessToken,
+    String? notificationToken,
+  }) async {
+    try {
+      final response = await remoteDataSource.registerWithGoogle(
+        idToken: idToken,
+        accessToken: accessToken,
+        notificationToken: notificationToken,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Check if user needs OTP verification or is directly logged in
+        dynamic token;
+        dynamic userId;
+        String? email;
+
+        if (response.data is Map) {
+          token = response.data['data']?['token'] ??
+              response.data['token'] ??
+              response.data['data']?['access_token'] ??
+              response.data['access_token'];
+
+          userId = response.data['data']?['user']?['id']?.toString() ??
+              response.data['user']?['id']?.toString() ??
+              response.data['data']?['userInfo']?['id']?.toString() ??
+              response.data['userInfo']?['id']?.toString();
+
+          email = response.data['data']?['user']?['email'] ??
+              response.data['user']?['email'] ??
+              response.data['data']?['userInfo']?['email'] ??
+              response.data['userInfo']?['email'];
+        }
+
+        // If token exists, user is logged in directly
+        if (token != null && token.toString().isNotEmpty) {
+          await AuthService.saveAuthData(
+            token: token.toString(),
+            userId: userId,
+            email: email,
+          );
+
+          DioHelper.instance.setAccessToken(token.toString());
+
+          try {
+            await startBackgroundLocationTracking();
+          } catch (e) {
+            print('⚠️ Error starting background location tracking: $e');
+          }
+
+          return response.data["message"] ?? "Registration successful.";
+        } else {
+          // User needs OTP verification
+          return response.data["message"] ?? "OTP sent successfully.";
+        }
+      } else {
+        throw Exception(response.data["message"] ?? "Google registration failed");
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 400) {
+        final message = e.response?.data['message'] ?? 'Google registration failed';
+        throw Exception(message);
+      } else {
+        throw Exception('حدث خطأ أثناء التسجيل باستخدام Google');
+      }
+    }
+  }
+
+  /// Login with Apple
+  Future<String> loginWithApple({
+    required String idToken,
+    String? authorizationCode,
+    String? notificationToken,
+  }) async {
+    try {
+      final response = await remoteDataSource.loginWithApple(
+        idToken: idToken,
+        authorizationCode: authorizationCode,
+        notificationToken: notificationToken,
+      );
+
+      if (response.statusCode == 200) {
+        // Extract token and user data
+        dynamic token;
+        dynamic userId;
+        String? email;
+
+        if (response.data is Map) {
+          token = response.data['data']?['token'] ??
+              response.data['token'] ??
+              response.data['data']?['access_token'] ??
+              response.data['access_token'];
+
+          userId = response.data['data']?['user']?['id']?.toString() ??
+              response.data['user']?['id']?.toString() ??
+              response.data['data']?['userInfo']?['id']?.toString() ??
+              response.data['userInfo']?['id']?.toString();
+
+          email = response.data['data']?['user']?['email'] ??
+              response.data['user']?['email'] ??
+              response.data['data']?['userInfo']?['email'] ??
+              response.data['userInfo']?['email'];
+        }
+
+        if (token != null && token.toString().isNotEmpty) {
+          await AuthService.saveAuthData(
+            token: token.toString(),
+            userId: userId,
+            email: email,
+          );
+
+          DioHelper.instance.setAccessToken(token.toString());
+
+          try {
+            await startBackgroundLocationTracking();
+          } catch (e) {
+            print('⚠️ Error starting background location tracking: $e');
+          }
+        }
+
+        return response.data["message"] ?? "Login successful.";
+      } else {
+        throw Exception(response.data["message"] ?? "Apple login failed");
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        // User not found - this is expected for new users
+        final message = e.response?.data['message'] ?? 'User not found. Please register first.';
+        throw Exception('404: $message'); // Prefix with 404 for easier detection
+      } else if (e.response?.statusCode == 401) {
+        final message = e.response?.data['message'] ?? 'Invalid Apple credentials';
+        throw Exception(message);
+      } else if (e.response?.statusCode == 400) {
+        final message = e.response?.data['message'] ?? 'Apple login failed';
+        throw Exception(message);
+      } else {
+        throw Exception('حدث خطأ أثناء تسجيل الدخول باستخدام Apple');
+      }
+    }
+  }
+
+  /// Register with Apple
+  Future<String> registerWithApple({
+    required String idToken,
+    String? authorizationCode,
+    String? notificationToken,
+  }) async {
+    try {
+      final response = await remoteDataSource.registerWithApple(
+        idToken: idToken,
+        authorizationCode: authorizationCode,
+        notificationToken: notificationToken,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Check if user needs OTP verification or is directly logged in
+        dynamic token;
+        dynamic userId;
+        String? email;
+
+        if (response.data is Map) {
+          token = response.data['data']?['token'] ??
+              response.data['token'] ??
+              response.data['data']?['access_token'] ??
+              response.data['access_token'];
+
+          userId = response.data['data']?['user']?['id']?.toString() ??
+              response.data['user']?['id']?.toString() ??
+              response.data['data']?['userInfo']?['id']?.toString() ??
+              response.data['userInfo']?['id']?.toString();
+
+          email = response.data['data']?['user']?['email'] ??
+              response.data['user']?['email'] ??
+              response.data['data']?['userInfo']?['email'] ??
+              response.data['userInfo']?['email'];
+        }
+
+        // If token exists, user is logged in directly
+        if (token != null && token.toString().isNotEmpty) {
+          await AuthService.saveAuthData(
+            token: token.toString(),
+            userId: userId,
+            email: email,
+          );
+
+          DioHelper.instance.setAccessToken(token.toString());
+
+          try {
+            await startBackgroundLocationTracking();
+          } catch (e) {
+            print('⚠️ Error starting background location tracking: $e');
+          }
+
+          return response.data["message"] ?? "Registration successful.";
+        } else {
+          // User needs OTP verification
+          return response.data["message"] ?? "OTP sent successfully.";
+        }
+      } else {
+        throw Exception(response.data["message"] ?? "Apple registration failed");
+      }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 400) {
+        final message = e.response?.data['message'] ?? 'Apple registration failed';
+        throw Exception(message);
+      } else {
+        throw Exception('حدث خطأ أثناء التسجيل باستخدام Apple');
+      }
+    }
   }
 }

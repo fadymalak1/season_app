@@ -5,6 +5,7 @@ import 'package:season_app/features/groups/data/models/sos_alert_model.dart';
 import 'package:season_app/features/groups/data/models/common_models.dart';
 import 'package:season_app/features/groups/data/repositories/groups_repository.dart';
 import 'package:season_app/features/groups/providers.dart';
+import 'package:season_app/core/services/background_location_service.dart';
 
 class GroupsState {
   final List<GroupModel> groups;
@@ -102,6 +103,10 @@ class GroupsController extends Notifier<GroupsState> {
         isCreating: false,
         message: 'تم إنشاء المجموعة بنجاح',
       );
+      
+      // Refresh group IDs for background location tracking
+      await refreshGroupIds();
+      
       return true;
     } catch (e) {
       state = state.copyWith(
@@ -180,6 +185,10 @@ class GroupsController extends Notifier<GroupsState> {
         isJoining: false,
         message: 'تم الانضمام للمجموعة بنجاح',
       );
+      
+      // Refresh group IDs for background location tracking
+      await refreshGroupIds();
+      
       return true;
     } catch (e) {
       state = state.copyWith(
@@ -202,6 +211,10 @@ class GroupsController extends Notifier<GroupsState> {
         isLoading: false,
         message: 'تم مغادرة المجموعة بنجاح',
       );
+      
+      // Refresh group IDs for background location tracking
+      await refreshGroupIds();
+      
       return true;
     } catch (e) {
       state = state.copyWith(

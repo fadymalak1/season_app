@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:season_app/core/services/auth_service.dart';
+import 'package:season_app/core/services/session_expired_navigation_service.dart';
 
 /// Callback function for token refresh
 typedef TokenRefreshCallback =
@@ -165,6 +167,7 @@ class DioHelper {
                 _isRefreshing = false;
                 // Clear tokens on refresh failure
                 clearTokens();
+                SessionExpiredNavigationService.handleSessionExpired();
                 // Reject all pending requests
                 _rejectPendingRequests(error);
                 handler.reject(error);
@@ -189,6 +192,7 @@ class DioHelper {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onError: (error, handler) {
+          _scheduleUnauthenticatedRedirectIfNeeded(error);
           final apiException = DioExceptionHandler.handleException(error);
 
           // Create a new DioException with custom error message
@@ -1135,4 +1139,58 @@ void dPrint(String message) {
   if (kDebugMode) {
     print(message);
   }
+}
+
+/// Paths where HTTP 401 means invalid credentials / OTP, not an expired app session.
+bool _shouldSkip401RedirectForPath(String path) {
+  final p = path.toLowerCase();
+  const skips = [
+    '/auth/login',
+    '/auth/register',
+    '/auth/verify-otp',
+    '/auth/resend-otp',
+    '/auth/forgot-password',
+    '/auth/verify-reset-otp',
+    '/auth/resend-reset-otp',
+    '/auth/reset-password',
+  ];
+  for (final s in skips) {
+    if (p.contains(s)) return true;
+  }
+  return false;
+}
+
+/// Laravel-style `{ status: 401, message: Unauthenticated. }`, or a request that sent Bearer token.
+bool _shouldRedirectToHomeFor401Body(dynamic data, RequestOptions options) {
+  if (data is Map) {
+    final msg = data['message']?.toString().toLowerCase() ?? '';
+    if (msg.contains('unauthenticated')) return true;
+    if (data['status'] == 401) return true;
+  }
+  final auth = options.headers['Authorization'] ?? options.headers['authorization'];
+  if (auth != null && auth.toString().trim().isNotEmpty) {
+    return true;
+  }
+  return false;
+}
+
+void _scheduleUnauthenticatedRedirectIfNeeded(DioException error) {
+  if (error.response?.statusCode != 401) return;
+  if (_shouldSkip401RedirectForPath(error.requestOptions.path)) return;
+
+  final auth = error.requestOptions.headers['Authorization'] ??
+      error.requestOptions.headers['authorization'];
+  final hasAuthHeader = auth != null && auth.toString().trim().isNotEmpty;
+  // Guest hit a protected route without a token — not "session expired"; avoid redirect/log spam.
+  if (!hasAuthHeader && !AuthService.isLoggedIn()) {
+    return;
+  }
+
+  if (!_shouldRedirectToHomeFor401Body(
+        error.response?.data,
+        error.requestOptions,
+      )) {
+    return;
+  }
+  SessionExpiredNavigationService.handleSessionExpired();
 }

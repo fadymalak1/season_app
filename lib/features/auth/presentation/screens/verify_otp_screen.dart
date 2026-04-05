@@ -34,7 +34,7 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen> {
 
   void startTimer() {
     timer?.cancel();
-    ref.read(otpTimerProvider.notifier).state = 300;
+    ref.read(otpTimerProvider.notifier).state = 120; // 2 minutes
     ref.read(otpTimerRunningProvider.notifier).state = true;
 
     timer = Timer.periodic(const Duration(seconds: 1), (t) {
@@ -174,7 +174,7 @@ class _VerifyOtpScreenState extends ConsumerState<VerifyOtpScreen> {
                   isLoading: otpState.isLoading,
                   text: tr.verify,
                   color: AppColors.primary,
-                  onPressed: (pinController.text.length < 4 || otpState.isLoading)
+                  onPressed: (pinController.text.length != 4 || otpState.isLoading)
                       ? null
                       : () async {
                     await ref.read(otpControllerProvider.notifier).verifyOtp(

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:season_app/core/constants/app_colors.dart';
 import 'package:season_app/core/localization/generated/l10n.dart';
 import 'package:season_app/core/router/routes.dart';
 import 'package:season_app/core/services/app_state_service.dart';
 import 'package:season_app/shared/providers/locale_provider.dart';
+import 'package:season_app/shared/widgets/custom_toast.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -28,6 +30,7 @@ class SettingsScreen extends ConsumerWidget {
               onPressed: () => context.pop(),
             ),
             backgroundColor: AppColors.primary,
+       
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 loc.settings,
@@ -115,17 +118,26 @@ class SettingsScreen extends ConsumerWidget {
                   
                   const SizedBox(height: 24),
                   
+                  // Support Section
+                  _buildSectionTitle(loc.support),
+                  const SizedBox(height: 12),
+                  
+                  _buildSettingCard(
+                    icon: Icons.support_agent,
+                    title: loc.contactUs,
+                    subtitle: loc.contactUsSubtitle,
+                    trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+                    onTap: () => _contactViaWhatsApp(context, loc),
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  
                   // Account Section
                   _buildSectionTitle(loc.account),
                   const SizedBox(height: 12),
                   
                   // Logout Button
                   _buildLogoutButton(context, ref, loc),
-                  
-                  const SizedBox(height: 12),
-                  
-                  // Delete Account Button
-                  _buildDeleteAccountButton(context, loc),
                   
                   const SizedBox(height: 32),
                 ],
@@ -477,86 +489,42 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDeleteAccountButton(BuildContext context, AppLocalizations loc) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.secondary, width: 1.5),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                title: Row(
-                  children: [
-                    const Icon(Icons.warning_outlined, color: AppColors.secondary),
-                    const SizedBox(width: 8),
-                    Text(loc.deleteAccount),
-                  ],
-                ),
-                content: Text(
-                  loc.deleteAccountWarning,
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(loc.cancel),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      // TODO: Implement delete account
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Delete account functionality coming soon'),
-                          backgroundColor: AppColors.secondary,
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.secondary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      loc.deleteAccount,
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.delete_forever, color: AppColors.secondary, size: 24),
-                const SizedBox(width: 12),
-                Text(
-                  loc.deleteAccount,
-                  style: const TextStyle(
-                    color: AppColors.secondary,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+  Future<void> _contactViaWhatsApp(BuildContext context, AppLocalizations loc) async {
+    const phoneNumber = '+201287952795';
+    const name = 'Fady Malak';
+    final isRtl = Localizations.localeOf(context).languageCode == 'ar';
+    
+    final message = isRtl
+        ? 'مرحباً $name، أريد الإبلاغ عن مشكلة في التطبيق:'
+        : 'Hello $name, I want to report an issue in the app:';
+    
+    final encodedMessage = Uri.encodeComponent(message);
+    final whatsappUrl = 'https://wa.me/$phoneNumber?text=$encodedMessage';
+    
+    try {
+      final uri = Uri.parse(whatsappUrl);
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      
+      if (!launched) {
+        if (context.mounted) {
+          CustomToast.error(
+            context,
+            loc.whatsappNotInstalled,
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        CustomToast.error(
+          context,
+          loc.whatsappNotInstalled,
+        );
+      }
+    }
   }
+
 }
 

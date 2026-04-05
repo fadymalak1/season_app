@@ -7,11 +7,12 @@ import 'package:season_app/core/constants/app_colors.dart';
 import 'package:season_app/core/localization/generated/l10n.dart';
 import 'package:season_app/core/router/routes.dart';
 import 'package:season_app/core/services/notification_service.dart';
+import 'package:season_app/core/services/social_login_service.dart';
 import 'package:season_app/core/utils/validators.dart';
 import 'package:season_app/features/auth/presentation/widgets/agreement_policy.dart';
-import 'package:season_app/features/auth/presentation/widgets/or_divider.dart';
-import 'package:season_app/features/auth/presentation/widgets/social_icons.dart';
+import 'package:season_app/features/auth/presentation/widgets/social_login_buttons.dart';
 import 'package:season_app/features/auth/providers.dart';
+import 'package:season_app/features/groups/providers.dart';
 import 'package:season_app/shared/helpers/snackbar_helper.dart';
 import 'package:season_app/shared/providers/locale_provider.dart';
 import 'package:season_app/shared/widgets/custom_button.dart';
@@ -26,6 +27,7 @@ class SignUpScreen extends ConsumerStatefulWidget {
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final formKey = GlobalKey<FormState>();
+  CountryCode selectedCode = CountryCode.fromDialCode('+966'); // Default to KSA
 
   @override
   void initState() {
@@ -50,15 +52,41 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     final confirmPasswordController = ref.watch(confirmPasswordControllerProvider);
     final signupState = ref.watch(signupControllerProvider);
     final signupNotifier = ref.read(signupControllerProvider.notifier);
-    CountryCode selectedCode = CountryCode.fromDialCode('+966'); // الافتراضي مصر
 
     // Listen to signup state changes
     ref.listen(signupControllerProvider, (previous, next) {
       if (next.error != null) {
-        SnackbarHelper.error(context, next.error.toString());
+        SnackbarHelper.error(context, next.error.toString().replaceAll('Exception: ', ''));
       } else if (next.message != null) {
         SnackbarHelper.success(context, next.message.toString());
-        context.push(Routes.verifyOtp);
+        if (next.needsOtpVerification) {
+          context.push(Routes.verifyOtp);
+        } else {
+          context.go(Routes.home);
+        }
+      }
+    });
+
+    // Also listen to login state for social login fallback
+    ref.listen(loginControllerProvider, (previous, next) async {
+      if (next.error != null) {
+        // Error already shown in login listener
+      } else if (next.message != null && next.isLoggedIn) {
+        SnackbarHelper.success(context, next.message.toString());
+        
+        // Clear any existing groups data for the new user
+        ref.read(groupsControllerProvider.notifier).clearAllData();
+        
+        // Subscribe to notification topics after successful login
+        try {
+          await NotificationService().subscribeToAllUsers();
+        } catch (e) {
+          debugPrint('Error subscribing to topics: $e');
+        }
+        
+        if (context.mounted) {
+          context.go(Routes.home);
+        }
       }
     });
 
@@ -91,6 +119,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             Expanded(
                               child: CustomTextField(
                                 hintText: tr.firstName,
+                                textDirection: TextDirection.ltr,
                                 controller: firstNameController,
                                 onChanged: (val) => ref.read(firstNameProvider.notifier).state = val,
                                 validator: (value) => Validators.notEmpty(value, isArabic: isArabic),
@@ -100,6 +129,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             Expanded(
                               child: CustomTextField(
                                 hintText: tr.lastName,
+                                textDirection: TextDirection.ltr,
                                 controller:lastNameController,
                                 onChanged: (val) => ref.read(lastNameProvider.notifier).state = val,
                                 validator: (value) => Validators.notEmpty(value, isArabic: isArabic),
@@ -113,6 +143,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         CustomTextField(
                           hintText: tr.email,
                           keyboardType: TextInputType.emailAddress,
+                          textDirection: TextDirection.ltr,
                           onChanged: (val) => ref.read(emailProvider.notifier).state = val,
                           validator: (value) => Validators.email(value, isArabic: isArabic),
                           controller: emailController,
@@ -121,22 +152,40 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         // Phone
                         Directionality( 
                           textDirection: TextDirection.ltr,
-                          child: CustomTextField(
-                            hintText: tr.phone,
-                            textDirection: TextDirection.ltr,
-                            keyboardType: TextInputType.phone,
-                            showCountryPicker: true,
-                            initialCountry: selectedCode,
-                            onCountryChanged: (code) {
-                              selectedCode = code;
-                            },
-                            onChanged: (val) {
-                              final fullNumber = '${selectedCode.dialCode}$val';
-                              ref.read(phoneProvider.notifier).state = fullNumber;
-                            },
-                            validator: (value) =>
-                                Validators.phone(value, isArabic: isArabic),
-                            controller: phoneController,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTextField(
+                                hintText: tr.phone,
+                                textDirection: TextDirection.ltr,
+                                keyboardType: TextInputType.phone,
+                                showCountryPicker: true,
+                                initialCountry: selectedCode,
+                                onCountryChanged: (code) {
+                                  setState(() {
+                                    selectedCode = code;
+                                  });
+                                },
+                                onChanged: (val) {
+                                  // Remove leading zero if country code is +966 (Saudi Arabia)
+                                  String cleanedNumber = val;
+                                  if (selectedCode.dialCode == '+966' && cleanedNumber.startsWith('0')) {
+                                    cleanedNumber = cleanedNumber.substring(1);
+                                    // Update the controller text to reflect the change
+                                    phoneController.value = TextEditingValue(
+                                      text: cleanedNumber,
+                                      selection: TextSelection.collapsed(offset: cleanedNumber.length),
+                                    );
+                                  }
+                                  final fullNumber = '${selectedCode.dialCode}$cleanedNumber';
+                                  ref.read(phoneProvider.notifier).state = fullNumber;
+                                },
+                                validator: (value) =>
+                                    Validators.phone(value, isArabic: isArabic, countryCode: selectedCode.dialCode),
+                                controller: phoneController,
+                              ),
+            
+                            ],
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -144,6 +193,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         CustomTextField(
                           hintText: tr.password,
                           obscureText: ref.watch(passwordVisibilityProvider),
+                          textDirection: TextDirection.ltr,
                           suffixIcon: IconButton(
                             icon: Icon(ref.watch(passwordVisibilityProvider)
                                 ? Icons.remove_red_eye
@@ -162,6 +212,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         CustomTextField(
                           hintText: tr.confirmPassword,
                           obscureText: ref.watch(confirmPasswordVisibilityProvider),
+                          textDirection: TextDirection.ltr,
                           suffixIcon: IconButton(
                             icon: Icon(ref.watch(confirmPasswordVisibilityProvider)
                                 ? Icons.remove_red_eye
@@ -209,10 +260,93 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             }
                           },
                         ),
-                        SizedBox(height: 20),
-                        OrDivider(tr: tr),
-                        const SizedBox(height: 20),
-                        SocialIcons(),
+                        SocialLoginButtons(
+                          onGooglePressed: () async {
+                            try {
+                              // Get FCM token
+                              final fcmToken = await NotificationService().getSavedFCMToken() ?? 
+                                  NotificationService().fcmToken;
+                              
+                              // Sign in with Google
+                              final googleData = await SocialLoginService.signInWithGoogle();
+                              
+                              // Call backend register/login (backend will handle if user exists)
+                              if (googleData['idToken'] != null && googleData['accessToken'] != null) {
+                                // Try login first, if user doesn't exist, backend should return appropriate error
+                                // Then try register
+                                try {
+                                  await ref.read(loginControllerProvider.notifier).loginWithGoogle(
+                                    idToken: googleData['idToken']!,
+                                    accessToken: googleData['accessToken']!,
+                                    notificationToken: fcmToken,
+                                  );
+                                } catch (e) {
+                                  // Check if it's a "user not found" error (404), then try register
+                                  final errorMessage = e.toString();
+                                  if (errorMessage.contains('404:') || 
+                                      errorMessage.toLowerCase().contains('not found') || 
+                                      errorMessage.toLowerCase().contains('not registered')) {
+                                    // User doesn't exist, try to register
+                                    await ref.read(signupControllerProvider.notifier).registerWithGoogle(
+                                      idToken: googleData['idToken']!,
+                                      accessToken: googleData['accessToken']!,
+                                      notificationToken: fcmToken,
+                                    );
+                                  } else {
+                                    // Other error (e.g., invalid token), show error
+                                    SnackbarHelper.error(context, errorMessage.replaceAll('Exception: ', ''));
+                                  }
+                                }
+                              } else {
+                                SnackbarHelper.error(context, 'Failed to get Google credentials');
+                              }
+                            } catch (e) {
+                              SnackbarHelper.error(context, e.toString().replaceAll('Exception: ', ''));
+                            }
+                          },
+                          onApplePressed: () async {
+                            try {
+                              // Get FCM token
+                              final fcmToken = await NotificationService().getSavedFCMToken() ?? 
+                                  NotificationService().fcmToken;
+                              
+                              // Sign in with Apple
+                              final appleData = await SocialLoginService.signInWithApple();
+                              
+                              // Call backend register/login (backend will handle if user exists)
+                              if (appleData['idToken'] != null) {
+                                try {
+                                  await ref.read(loginControllerProvider.notifier).loginWithApple(
+                                    idToken: appleData['idToken']!,
+                                    authorizationCode: appleData['authorizationCode'],
+                                    notificationToken: fcmToken,
+                                  );
+                                } catch (e) {
+                                  // Check if it's a "user not found" error (404), then try register
+                                  final errorMessage = e.toString();
+                                  if (errorMessage.contains('404:') || 
+                                      errorMessage.toLowerCase().contains('not found') || 
+                                      errorMessage.toLowerCase().contains('not registered')) {
+                                    // User doesn't exist, try to register
+                                    await ref.read(signupControllerProvider.notifier).registerWithApple(
+                                      idToken: appleData['idToken']!,
+                                      authorizationCode: appleData['authorizationCode'],
+                                      notificationToken: fcmToken,
+                                    );
+                                  } else {
+                                    // Other error (e.g., invalid token), show error
+                                    SnackbarHelper.error(context, errorMessage.replaceAll('Exception: ', ''));
+                                  }
+                                }
+                              } else {
+                                SnackbarHelper.error(context, 'Failed to get Apple credentials');
+                              }
+                            } catch (e) {
+                              SnackbarHelper.error(context, e.toString().replaceAll('Exception: ', ''));
+                            }
+                          },
+                          isLoading: signupState.isLoading,
+                        ),
                         const SizedBox(height: 20),
                         AgreementPolicy(isArabic: isArabic),
                         const SizedBox(height: 20),

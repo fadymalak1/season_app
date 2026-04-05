@@ -1,8 +1,8 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:season_app/core/constants/app_colors.dart';
@@ -26,40 +26,79 @@ class GroupDetailsScreen extends ConsumerStatefulWidget {
   ConsumerState<GroupDetailsScreen> createState() => _GroupDetailsScreenState();
 }
 
-class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
-  StreamSubscription<Position>? _locationSubscription;
+class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> with WidgetsBindingObserver {
+  Timer? _groupDetailsRefreshTimer;
+  static const Duration _refreshInterval = Duration(seconds: 5); // Auto-refresh every 5 seconds
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     Future.microtask(() {
       ref.read(groupsControllerProvider.notifier).loadGroupDetails(widget.groupId);
       _startLocationTracking();
+      _startAutoRefresh();
+      // Note: Safety radius monitoring is now continuous and runs globally
+      // No need to start/stop it per screen
     });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      // Pause auto-refresh when app goes to background
+      _stopAutoRefresh();
+    } else if (state == AppLifecycleState.resumed) {
+      // Resume auto-refresh when app comes to foreground
+      _startAutoRefresh();
+      // Also refresh immediately when resuming
+      _refreshGroupDetails();
+    }
+  }
+
+  /// Start automatic refresh timer
+  void _startAutoRefresh() {
+    _groupDetailsRefreshTimer?.cancel();
+    _groupDetailsRefreshTimer = Timer.periodic(_refreshInterval, (timer) {
+      if (mounted) {
+        _refreshGroupDetails();
+      } else {
+        timer.cancel();
+      }
+    });
+    debugPrint('🔄 Auto-refresh started: every ${_refreshInterval.inSeconds} seconds');
+  }
+
+  /// Stop automatic refresh timer
+  void _stopAutoRefresh() {
+    _groupDetailsRefreshTimer?.cancel();
+    _groupDetailsRefreshTimer = null;
+    debugPrint('⏸️ Auto-refresh stopped');
   }
 
   void _startLocationTracking() async {
     final hasPermission = await LocationService.requestPermissions();
     if (!hasPermission) return;
 
-    // Start background location service
-    await startBackgroundLocationTracking(widget.groupId);
-
-    // Also listen to location stream for foreground updates
-    _locationSubscription = LocationService.getLocationStream().listen((position) {
-      ref.read(groupsControllerProvider.notifier).updateLocation(
-        groupId: widget.groupId,
-        latitude: position.latitude,
-        longitude: position.longitude,
-      );
-    });
+    // Refresh group IDs - location tracking is handled globally by startBackgroundLocationTracking()
+    // It sends location updates to ALL groups regardless of which screen is open
+    await refreshGroupIds();
+    
+    // Note: Location updates are handled globally by startBackgroundLocationTracking()
+    // No need for screen-specific location tracking
   }
+
+  // Note: Safety radius monitoring is now handled globally by SafetyRadiusAlarmService
+  // It runs continuously every 10 seconds for all groups where user is admin
+  // No need for screen-specific monitoring
 
   @override
   void dispose() {
-    _locationSubscription?.cancel();
-    // Stop background location tracking when leaving group details
-    stopBackgroundLocationTracking();
+    WidgetsBinding.instance.removeObserver(this);
+    _stopAutoRefresh();
+    // Note: Location tracking and safety radius monitoring run globally
+    // They continue even when leaving this screen and work on all screens
     super.dispose();
   }
 
@@ -106,6 +145,9 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
     final currentUserId = AuthService.getUserId();
     final isOwner = currentUserId != null && currentUserId == group.ownerId.toString();
 
+    // Note: Safety radius monitoring is now handled globally by SafetyRadiusAlarmService
+    // It continuously monitors all groups where user is admin, regardless of current screen
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: RefreshIndicator(
@@ -118,6 +160,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
             floating: false,
             pinned: true,
             backgroundColor: AppColors.primary,
+    
             leading: IconButton(
               onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -711,17 +754,17 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                                   fontFamily: 'Cairo',
                                 ),
                               ),
-                              if (member.latestLocation != null) ...[
-                                const SizedBox(width: 8),
-                                Text(
-                                  '${member.latestLocation!.distanceFromCenter.toStringAsFixed(0)}${isRtl ? "م" : "m"}',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.grey.shade600,
-                                    fontFamily: 'Cairo',
-                                  ),
-                                ),
-                              ],
+                              // if (member.latestLocation != null) ...[
+                              //   const SizedBox(width: 8),
+                              //   Text(
+                              //     '${member.latestLocation!.distanceFromCenter.toStringAsFixed(0)}${isRtl ? "م" : "m"}',
+                              //     style: TextStyle(
+                              //       fontSize: 11,
+                              //       color: Colors.grey.shade600,
+                              //       fontFamily: 'Cairo',
+                              //     ),
+                              //   ),
+                              // ],
                        
                             ],
                           ),
@@ -1033,8 +1076,8 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
   }
 
   Widget _buildMemberAvatar(GroupMemberModel member, bool isWithinRadius, bool isOwnerMember) {
-    final hasAvatar = member.user.avatar != null && member.user.avatar!.isNotEmpty;
     final baseColor = isWithinRadius ? AppColors.success : AppColors.error;
+    final hasAvatar = member.user.avatar != null && member.user.avatar!.isNotEmpty;
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -1048,6 +1091,7 @@ class _GroupDetailsScreenState extends ConsumerState<GroupDetailsScreen> {
                   style: TextStyle(
                     color: baseColor,
                     fontWeight: FontWeight.bold,
+                    fontSize: 18,
                   ),
                 )
               : null,

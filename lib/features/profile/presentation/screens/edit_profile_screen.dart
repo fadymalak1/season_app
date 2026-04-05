@@ -7,7 +7,10 @@ import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:season_app/core/constants/app_colors.dart';
 import 'package:season_app/core/localization/generated/l10n.dart';
+import 'package:season_app/core/utils/phone_country_parser.dart';
+import 'package:season_app/core/utils/validators.dart';
 import 'package:season_app/features/profile/providers.dart';
+import 'package:season_app/shared/providers/locale_provider.dart';
 import 'package:season_app/shared/widgets/custom_button.dart';
 import 'package:season_app/shared/widgets/custom_text_field.dart';
 import 'package:season_app/shared/widgets/custom_dropdown.dart';
@@ -32,6 +35,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   int? _selectedAvatarId;
   DateTime? _selectedDate;
   CountryCode selectedCountryCode = CountryCode.fromDialCode('+966'); // Default to Saudi Arabia
+  /// Raw phone from API; used to skip sending `phone` when unchanged (avoids duplicate-phone errors).
+  String? _originalPhoneFromProfile;
 
   @override
   void initState() {
@@ -41,41 +46,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       final profile = ref.read(profileControllerProvider).profile;
       if (profile != null) {
         setState(() {
+          _originalPhoneFromProfile = profile.phone;
           _nameController.text = profile.name;
           _nicknameController.text = profile.nickname ?? '';
           _emailController.text = profile.email;
-          
-          // Parse phone number to extract country code and number
-          final phone = profile.phone;
-          if (phone.isNotEmpty) {
-            // Try to find a country code in the phone number
-            final plusIndex = phone.indexOf('+');
-            if (plusIndex != -1) {
-              // Find the end of the country code (first space after + or end of string)
-              final spaceIndex = phone.indexOf(' ', plusIndex);
-              if (spaceIndex != -1) {
-                final countryCodeStr = phone.substring(plusIndex, spaceIndex);
-                final number = phone.substring(spaceIndex + 1);
-                selectedCountryCode = CountryCode.fromDialCode(countryCodeStr);
-                _phoneController.text = number;
-              } else {
-                // No space, try to parse (assume 1-4 digit country code after +)
-                for (int i = 1; i <= 4 && i < phone.length; i++) {
-                  final potentialCode = phone.substring(0, plusIndex + i + 1);
-                  try {
-                    final code = CountryCode.fromDialCode(potentialCode);
-                    selectedCountryCode = code;
-                    _phoneController.text = phone.substring(plusIndex + i + 1);
-                    break;
-                  } catch (e) {
-                    // Continue trying
-                  }
-                }
-              }
-            } else {
-              _phoneController.text = phone;
-            }
-          }
+
+          final parsed = parseProfilePhoneForEdit(profile.phone);
+          selectedCountryCode = parsed.country;
+          _phoneController.text = parsed.nationalNumber;
           
           _birthDateController.text = profile.birthDate ?? '';
           _selectedGender = profile.gender;
@@ -173,7 +151,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     }
 
     final loc = AppLocalizations.of(context);
-    
+
     // Convert selected avatar to file if avatar is selected
     File? photoFile;
     if (_selectedAvatarId != null) {
@@ -184,14 +162,23 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
     print('📝 Calling updateProfile with photoFile: ${photoFile != null ? photoFile.path : "null"}');
 
-    // Combine country code with phone number
+    final profilePhone =
+        _originalPhoneFromProfile ?? ref.read(profileControllerProvider).profile?.phone;
+    final storedCanon = canonicalInternationalPhoneDigits(profilePhone ?? '');
+    final formCanon = canonicalInternationalPhoneDigitsFromForm(
+      country: selectedCountryCode,
+      nationalInput: _phoneController.text,
+    );
+    final phoneUnchanged = storedCanon == formCanon;
+
     final fullPhoneNumber = '${selectedCountryCode.dialCode}${_phoneController.text.trim()}';
-    
+    final String? phoneToSend = phoneUnchanged ? null : fullPhoneNumber;
+
     final success = await ref.read(profileControllerProvider.notifier).updateProfile(
       name: _nameController.text.trim(),
       nickname: _nicknameController.text.trim().isEmpty ? null : _nicknameController.text.trim(),
       email: _emailController.text.trim(),
-      phone: fullPhoneNumber,
+      phone: phoneToSend,
       birthDate: _birthDateController.text.trim().isEmpty ? null : _birthDateController.text.trim(),
       gender: _selectedGender,
       avatarId: null,
@@ -199,6 +186,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     );
 
     if (success && mounted) {
+      _originalPhoneFromProfile =
+          ref.read(profileControllerProvider).profile?.phone ?? _originalPhoneFromProfile;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(loc.profileUpdatedSuccessfully),
@@ -327,30 +316,54 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 // Phone Field with Country Code
                 Directionality( 
                   textDirection: TextDirection.ltr,
-                  child: CustomTextField(
-                    controller: _phoneController,
-                    hintText: loc.phone,
-                    textDirection: TextDirection.ltr,
-                    keyboardType: TextInputType.phone,
-                    showCountryPicker: true,
-                    initialCountry: selectedCountryCode,
-                    onCountryChanged: (code) {
-                      setState(() {
-                        selectedCountryCode = code;
-                      });
-                    },
-                    onChanged: (val) {
-                      // Store the full number for later
-                      setState(() {
-                        // This will be used when saving
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter phone';
-                      }
-                      return null;
-                    },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomTextField(
+                        key: ValueKey(
+                          'edit_phone_${selectedCountryCode.code}_${selectedCountryCode.dialCode}',
+                        ),
+                        controller: _phoneController,
+                        hintText: loc.phone,
+                        textDirection: TextDirection.ltr,
+                        keyboardType: TextInputType.phone,
+                        showCountryPicker: true,
+                        initialCountry: selectedCountryCode,
+                        onCountryChanged: (code) {
+                          setState(() {
+                            selectedCountryCode = code;
+                            // Remove leading zero if switching to Saudi Arabia
+                            if (code.dialCode == '+966' && _phoneController.text.startsWith('0')) {
+                              _phoneController.text = _phoneController.text.substring(1);
+                            }
+                          });
+                        },
+                        onChanged: (val) {
+                          // Remove leading zero if country code is +966 (Saudi Arabia)
+                          if (selectedCountryCode.dialCode == '+966' && val.startsWith('0')) {
+                            final cleanedNumber = val.substring(1);
+                            _phoneController.value = TextEditingValue(
+                              text: cleanedNumber,
+                              selection: TextSelection.collapsed(offset: cleanedNumber.length),
+                            );
+                          }
+                        },
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return ref.watch(localeProvider).languageCode == 'ar'
+                                ? 'رقم الهاتف مطلوب'
+                                : 'Please enter phone';
+                          }
+                          final isArabic = ref.watch(localeProvider).languageCode == 'ar';
+                          return Validators.phone(
+                            value,
+                            isArabic: isArabic,
+                            countryCode: selectedCountryCode.dialCode,
+                          );
+                        },
+                      ),
+               
+                    ],
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -370,7 +383,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
                 // Gender Dropdown
                 CustomDropdown(
-                  hintText: '${loc.gender} (${loc.optional})',
+                  hintText: loc.gender,
                   value: _selectedGender,
                   prefixIcon: const Icon(Icons.person_outline),
                   items: [
@@ -383,6 +396,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       child: Text(loc.female),
                     ),
                   ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select gender';
+                    }
+                    return null;
+                  },
                   onChanged: (value) {
                     setState(() {
                       _selectedGender = value;

@@ -3,18 +3,23 @@ import 'package:dio/dio.dart';
 import 'package:season_app/core/constants/api_endpoints.dart';
 import 'package:season_app/core/services/dio_client.dart';
 import 'package:season_app/core/services/auth_service.dart';
+import 'package:season_app/core/services/app_config_service.dart';
 import 'package:season_app/shared/providers/locale_provider.dart';
 
 // DioHelper provider (singleton) - initialized once
 final dioHelperProvider = Provider<DioHelper>((ref) {
   final helper = DioHelper.instance;
   
-  // Initialize DioHelper only once
+  final apiTimeout = AppConfigService.getApiTimeout();
+  
   helper.initialize(
     baseUrl: ApiEndpoints.baseUrl,
+    connectTimeout: Duration(seconds: apiTimeout > 0 ? apiTimeout : 30),
+    receiveTimeout: Duration(seconds: apiTimeout > 0 ? apiTimeout : 30),
+    sendTimeout: Duration(seconds: apiTimeout > 0 ? apiTimeout : 30),
     enableLogging: true,
     headers: {
-      'Accept-Language': 'en', // Default language, will be updated by dioProvider
+      'Accept-Language': 'ar',
     },
   );
 

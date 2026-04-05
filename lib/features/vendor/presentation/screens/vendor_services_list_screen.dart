@@ -40,37 +40,56 @@ class VendorServicesListScreen extends ConsumerWidget {
       body: RefreshIndicator(
         onRefresh: () => ref.read(vendorServicesProvider.notifier).refresh(),
         child: servicesAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, s) => Center(child: Text(e.toString())),
+          loading: () => const SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: SizedBox(
+              height: 400,
+              child: Center(child: CircularProgressIndicator()),
+            ),
+          ),
+          error: (e, s) => SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: SizedBox(
+              height: 400,
+              child: Center(child: Text(e.toString())),
+            ),
+          ),
           data: (items) {
             if (items.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 84,
-                      height: 84,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.08),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.inventory_2_outlined, size: 40, color: AppColors.primary),
+              return SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height - 200,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 84,
+                          height: 84,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withOpacity(0.08),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.inventory_2_outlined, size: 40, color: AppColors.primary),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(loc.noServicesYet, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * (2 / 3),
+                          child: CustomButton(text: loc.createService, onPressed: () => context.push(Routes.vendorServiceNew)),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 12),
-                    Text(loc.noServicesYet, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * (2 / 3),
-                      child: CustomButton(text: loc.createService, onPressed: () => context.push(Routes.vendorServiceNew)),
-                    ),
-                  ],
+                  ),
                 ),
               );
             }
 
             return ListView.separated(
               padding: const EdgeInsets.all(16),
+              physics: const AlwaysScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 final item = items[index];
                 return InkWell(

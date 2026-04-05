@@ -2,20 +2,59 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Background message handler - must be a top-level function
+/// This runs in a separate isolate when app is terminated
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  debugPrint('📩 Background Message: ${message.messageId}');
+  // Ensure Flutter bindings are initialized in the background isolate
+  // This is required for plugins to work in background isolate
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  debugPrint('📩 Background Message Received (App Closed/Terminated)');
+  debugPrint('📩 Message ID: ${message.messageId}');
   debugPrint('📩 Title: ${message.notification?.title}');
   debugPrint('📩 Body: ${message.notification?.body}');
   debugPrint('📩 Data: ${message.data}');
   
-  // Show local notification in background/terminated state
-  if (message.notification != null) {
+  try {
     final flutterLocalNotifications = FlutterLocalNotificationsPlugin();
+    
+    // Initialize local notifications plugin
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings();
+    const InitializationSettings initSettings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
+    );
+    await flutterLocalNotifications.initialize(initSettings);
+    
+    // CRITICAL: Create notification channels BEFORE showing notifications
+    // This ensures channels exist even when app is terminated
+    if (Platform.isAndroid) {
+      await _createNotificationChannelsForBackground(flutterLocalNotifications);
+    }
+  
+    // Check if this is a safety radius alarm
+  final isSafetyRadiusAlarm = message.data['type'] == 'safety_radius_alert' ||
+      message.data['notification_type'] == 'safety_radius_alert';
+  
+  // CRITICAL: Let native AlarmNotificationService handle safety_radius_alert
+  // The native service creates the channel with proper alarm sound and shows notification
+  // We skip handling it here to avoid conflicts and ensure alarm sound works
+  if (isSafetyRadiusAlarm) {
+    debugPrint('🚨 Safety radius alarm detected - letting native AlarmNotificationService handle it');
+    debugPrint('   Native service will show notification with alarm sound');
+    return; // Exit early - native service handles this
+  }
+  
+  // Regular notifications continue below...
+  if (message.notification != null) {
+    // Regular notification
     const androidDetails = AndroidNotificationDetails(
       'season_app_channel',
       'Season App Notifications',
@@ -34,6 +73,70 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       notificationDetails,
     );
     debugPrint('✅ Local notification shown in background');
+  } else {
+    // If no notification object, show from data payload
+    if (message.data.isNotEmpty) {
+      final title = message.data['title'] ?? 'Season App';
+      final body = message.data['body'] ?? message.data['message'] ?? 'New notification';
+      
+      const androidDetails = AndroidNotificationDetails(
+        'season_app_channel',
+        'Season App Notifications',
+        channelDescription: 'Notifications from Season App',
+        importance: Importance.high,
+        priority: Priority.high,
+        showWhen: true,
+        enableVibration: true,
+        playSound: true,
+      );
+      const notificationDetails = NotificationDetails(android: androidDetails);
+      await flutterLocalNotifications.show(
+        message.hashCode,
+        title.toString(),
+        body.toString(),
+        notificationDetails,
+      );
+      debugPrint('✅ Local notification shown from data payload');
+    } else {
+      debugPrint('⚠️ No notification data to display');
+    }
+  }
+  } catch (e, stackTrace) {
+    debugPrint('❌ Error in background message handler: $e');
+    debugPrint('❌ Stack trace: $stackTrace');
+  }
+}
+
+/// Create notification channels for background handler
+/// This ensures channels exist when app is terminated
+Future<void> _createNotificationChannelsForBackground(
+  FlutterLocalNotificationsPlugin flutterLocalNotifications,
+) async {
+  try {
+    // Create regular notification channel
+    const AndroidNotificationChannel regularChannel = AndroidNotificationChannel(
+      'season_app_channel',
+      'Season App Notifications',
+      description: 'Notifications from Season App',
+      importance: Importance.high,
+      enableVibration: true,
+      playSound: true,
+      showBadge: true,
+    );
+
+    await flutterLocalNotifications
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(regularChannel);
+
+    debugPrint('✅ Regular notification channel created in background handler');
+    
+    // NOTE: Alarm channel is created by native AlarmNotificationService
+    // We don't create it here to avoid overwriting the native channel with alarm sound
+    // The native service creates the channel with proper alarm sound URI
+    debugPrint('ℹ️ Alarm channel is created by native AlarmNotificationService with alarm sound');
+  } catch (e) {
+    debugPrint('❌ Error creating notification channels in background: $e');
   }
 }
 
@@ -167,7 +270,12 @@ class NotificationService {
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
-    debugPrint('✅ Android notification channel created');
+    // NOTE: Alarm channel is created natively in MainActivity.kt with system alarm sound
+    // We don't create it here to avoid overriding the native channel configuration
+    // The native channel has the alarm sound properly configured
+
+    debugPrint('✅ Android notification channels created');
+    debugPrint('✅ Alarm channel created natively in MainActivity.kt with alarm sound');
   }
 
   /// Get FCM token
@@ -252,8 +360,46 @@ class NotificationService {
     debugPrint('📩 Body: ${message.notification?.body}');
     debugPrint('📩 Data: ${message.data}');
 
-    // Show local notification when app is in foreground
-    if (message.notification != null) {
+    // Check if this is a safety radius alarm
+    final isSafetyRadiusAlarm = message.data['type'] == 'safety_radius_alert' ||
+        message.data['notification_type'] == 'safety_radius_alert';
+    
+    // Check if user is group admin (owner) - handle both string and bool values
+    final isAdmin = message.data['is_admin'] == true || 
+                    message.data['is_admin'] == 'true' ||
+                    message.data['is_owner'] == true ||
+                    message.data['is_owner'] == 'true' ||
+                    message.data['for_admin'] == true ||
+                    message.data['for_admin'] == 'true';
+    
+    // Additional validation: Verify required fields exist
+    final hasRequiredFields = message.data['group_id'] != null && 
+                               message.data['member_id'] != null;
+    
+    if (isSafetyRadiusAlarm && isAdmin && hasRequiredFields) {
+      // CRITICAL: Cancel any existing notification from FCM that might not have sound
+      // This ensures our local notification with sound will be displayed
+      if (Platform.isAndroid) {
+        try {
+          // Cancel any notification that FCM might have auto-displayed
+          await _localNotifications.cancelAll();
+          debugPrint('🔄 Cancelled existing notifications to ensure alarm sound plays');
+        } catch (e) {
+          debugPrint('⚠️ Error cancelling notifications: $e');
+        }
+      }
+      
+      // Show alarm notification with system default sound
+      await _showSafetyRadiusAlarm(
+        title: message.notification?.title ?? message.data['title'] ?? '🚨 Safety Alert',
+        body: message.notification?.body ?? message.data['body'] ?? 'A group member is outside the safety radius!',
+        payload: jsonEncode(message.data),
+        notificationId: message.data['group_id'] != null 
+            ? int.tryParse(message.data['group_id'].toString()) ?? message.hashCode
+            : message.hashCode,
+      );
+    } else if (message.notification != null) {
+      // Regular notification
       await _showLocalNotification(
         title: message.notification!.title ?? 'New Notification',
         body: message.notification!.body ?? '',
@@ -348,6 +494,73 @@ class NotificationService {
       debugPrint('✅ Local notification shown: $title');
     } catch (e) {
       debugPrint('❌ Error showing local notification: $e');
+    }
+  }
+
+  /// Show safety radius alarm notification (for admins only)
+  Future<void> _showSafetyRadiusAlarm({
+    required String title,
+    required String body,
+    String? payload,
+    int? notificationId,
+  }) async {
+    try {
+      // NOTE: Alarm channel is created natively in MainActivity.kt with system alarm sound
+      // We don't delete/recreate it here to preserve the native alarm sound configuration
+      // The channel is created once when the app starts with proper alarm sound settings
+
+      // Alarm notification with SYSTEM ALARM SOUND (not default notification sound)
+      // Use system alarm sound URI directly in notification details
+      final alarmSoundUri = UriAndroidNotificationSound(
+        'content://settings/system/alarm_alert'
+      );
+      
+      final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+        'safety_radius_alarm_channel',
+        'Safety Radius Alarms',
+        channelDescription: 'High-priority alarms when group members go out of safety radius',
+        importance: Importance.high, // Match channel importance
+        priority: Priority.max,
+        playSound: true, // Explicitly enable sound
+        sound: alarmSoundUri, // Use alarm sound URI directly
+        enableVibration: true,
+        enableLights: true,
+        icon: '@mipmap/ic_launcher',
+        ongoing: false,
+        autoCancel: true,
+        category: AndroidNotificationCategory.alarm, // Alarm category for maximum priority
+      );
+
+      const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+        sound: 'alarm.caf', // Custom alarm sound file (add alarm.caf to ios/Runner/)
+        interruptionLevel: InterruptionLevel.critical,
+      );
+
+      final NotificationDetails notificationDetails = NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+      );
+
+      // Use a unique notification ID to ensure it always shows
+      final uniqueNotificationId = ((notificationId ?? DateTime.now().millisecond).abs() % 2147483647).toInt();
+      
+      await _localNotifications.show(
+        uniqueNotificationId,
+        title,
+        body,
+        notificationDetails,
+        payload: payload,
+      );
+
+      debugPrint('🚨 Safety radius alarm notification shown: $title');
+      debugPrint('   Notification ID: $uniqueNotificationId');
+      debugPrint('   Channel: safety_radius_alarm_channel');
+      debugPrint('   Play Sound: true, Category: alarm');
+    } catch (e) {
+      debugPrint('❌ Error showing safety radius alarm: $e');
     }
   }
 

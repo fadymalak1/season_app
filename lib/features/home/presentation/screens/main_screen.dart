@@ -10,11 +10,51 @@ import 'package:season_app/features/home/presentation/screens/group_page.dart';
 import 'package:season_app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:season_app/shared/providers/locale_provider.dart';
 
-class MainScreen extends ConsumerWidget {
-  const MainScreen({super.key});
+class MainScreen extends ConsumerStatefulWidget {
+  final String? initialTab;
+  
+  const MainScreen({super.key, this.initialTab});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends ConsumerState<MainScreen> {
+  @override
+  void initState() {
+    super.initState();
+    
+    // Set initial tab based on query parameter
+    if (widget.initialTab != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final tabIndex = _getTabIndex(widget.initialTab!);
+        if (tabIndex != null) {
+          ref.read(bottomNavIndexProvider.notifier).state = tabIndex;
+        }
+      });
+    }
+  }
+
+  int? _getTabIndex(String tab) {
+    switch (tab.toLowerCase()) {
+      case 'bag':
+        return 1; // BagPage
+      case 'reminders':
+      case 'reminder':
+        return 2; // CardPage (Reminders)
+      case 'groups':
+      case 'group':
+        return 3; // GroupPage
+      case 'profile':
+        return 4; // ProfileScreen
+      default:
+        return null;
+    }
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
     final currentIndex = ref.watch(bottomNavIndexProvider);
     final locale = ref.watch(localeProvider);
     final isRtl = locale.languageCode == 'ar';
@@ -35,8 +75,8 @@ class MainScreen extends ConsumerWidget {
         label: isRtl ? 'الحقيبة' : loc.bag,
       ),
       BottomNavItem(
-        icon: Icons.credit_card_rounded,  // Modern card icon
-        label: isRtl ? 'البطاقة' : loc.card,
+        icon: Icons.notifications_outlined,  // Reminder icon
+        label: isRtl ? 'التذكيرات' : loc.bagRemindersTitle,
       ),
       BottomNavItem(
         icon: Icons.explore_outlined,  // Modern explore/no loss icon

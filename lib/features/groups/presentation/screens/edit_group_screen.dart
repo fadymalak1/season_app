@@ -32,7 +32,7 @@ class _EditGroupScreenState extends ConsumerState<EditGroupScreen> {
       if (group != null) {
         _nameController = TextEditingController(text: group.name);
         _descriptionController = TextEditingController(text: group.description ?? '');
-        _safetyRadius = group.safetyRadius;
+        _safetyRadius = group.safetyRadius < 30 ? 30 : group.safetyRadius;
         _notificationsEnabled = group.notificationsEnabled;
         setState(() {});
       }
@@ -203,9 +203,9 @@ class _EditGroupScreenState extends ConsumerState<EditGroupScreen> {
                       ),
                       child: Slider(
                         value: _safetyRadius.toDouble(),
-                        min: 50,
-                        max: 5000,
-                        divisions: 99,
+                        min: 30,
+                        max: 1000,
+                        divisions: 97,
                         onChanged: (value) {
                           setState(() {
                             _safetyRadius = value.toInt();

@@ -1,12 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:season_app/core/services/auth_service.dart';
 import 'package:season_app/core/services/dio_client.dart';
+import 'package:season_app/core/services/safety_radius_alarm_service.dart';
+import 'package:season_app/core/services/background_location_service.dart';
 import 'package:season_app/features/groups/providers.dart';
 
 class AppStateService {
   /// Clear all app state including authentication, groups, and other user data
   static Future<void> clearAllAppState(WidgetRef ref) async {
     try {
+      // Stop safety radius monitoring
+      SafetyRadiusAlarmService().stopMonitoring();
+      
+      // Stop background location tracking
+      await stopBackgroundLocationTracking();
+      
       // Clear authentication data
       await AuthService.logout();
       

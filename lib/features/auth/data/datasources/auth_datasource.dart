@@ -149,4 +149,84 @@ class AuthRemoteDataSource {
 
     return response;
   }
+
+  /// Login with Google
+  Future<Response> loginWithGoogle({
+    required String idToken,
+    required String accessToken,
+    String? notificationToken,
+  }) async {
+    final data = {
+      "id_token": idToken,
+      "access_token": accessToken,
+      "fcm_token": notificationToken ?? "",
+    };
+
+    final response = await dio.post(
+      ApiEndpoints.loginWithGoogle,
+      data: data,
+    );
+
+    return response;
+  }
+
+  /// Register with Google
+  Future<Response> registerWithGoogle({
+    required String idToken,
+    required String accessToken,
+    String? notificationToken,
+  }) async {
+    final data = {
+      "id_token": idToken,
+      "access_token": accessToken,
+      "fcm_token": notificationToken ?? "",
+    };
+
+    final response = await dio.post(
+      ApiEndpoints.registerWithGoogle,
+      data: data,
+    );
+
+    return response;
+  }
+
+  /// Login with Apple
+  Future<Response> loginWithApple({
+    required String idToken,
+    String? authorizationCode,
+    String? notificationToken,
+  }) async {
+    final data = {
+      "id_token": idToken,
+      if (authorizationCode != null) "authorization_code": authorizationCode,
+      "fcm_token": notificationToken ?? "",
+    };
+
+    final response = await dio.post(
+      ApiEndpoints.loginWithApple,
+      data: data,
+    );
+
+    return response;
+  }
+
+  /// Register with Apple
+  Future<Response> registerWithApple({
+    required String idToken,
+    String? authorizationCode,
+    String? notificationToken,
+  }) async {
+    final data = {
+      "id_token": idToken,
+      if (authorizationCode != null) "authorization_code": authorizationCode,
+      "fcm_token": notificationToken ?? "",
+    };
+
+    final response = await dio.post(
+      ApiEndpoints.registerWithApple,
+      data: data,
+    );
+
+    return response;
+  }
 }
